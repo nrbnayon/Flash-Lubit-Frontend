@@ -1,5 +1,5 @@
 "use client";
-import { ArrowDownIcon, ChevronRightIcon, MicIcon } from "lucide-react";
+import { ArrowDownIcon} from "lucide-react";
 import { useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export const HomeScreen = () => {
   // State for user inputs
@@ -362,37 +368,37 @@ export const HomeScreen = () => {
                 </CardContent>
               </Card>
 
-              {/* AI Analysis Modal */}
-              {showAnalysisModal && (
-                <Card className="flex flex-col items-start gap-3 md:gap-5 p-4 md:p-6 relative self-stretch w-full bg-[#ffffff33] rounded-[20px]">
-                  <CardContent className="flex flex-col items-start gap-3 md:gap-5 p-0 w-full">
-                    <div className="flex flex-col items-start gap-3 md:gap-5 relative self-stretch w-full">
-                      <div className="inline-flex items-center gap-3 md:gap-6 relative">
-                        <img
-                          className="relative w-8 h-8 md:w-10 md:h-10"
-                          alt="AI Analysis Icon"
-                          src="/frame.svg"
-                        />
-
-                        <h2 className="font-['Inter',Helvetica] font-semibold text-[#101010] text-lg md:text-xl text-center tracking-[0] leading-[normal] whitespace-nowrap">
-                          AI Analysis
-                        </h2>
-                      </div>
-
-                      <Textarea
-                        className="h-[150px] md:h-[244px] p-3 md:p-5 bg-white rounded-xl border border-solid border-[#7630b5] font-medium text-[#707070] text-sm md:text-base"
-                        placeholder="Paste chat history or any text here..."
-                        value={analyzeText}
-                        onChange={(e) => setAnalyzeText(e.target.value)}
+              {/* AI Analysis Modal using shadcn Dialog */}
+              <Dialog
+                open={showAnalysisModal}
+                onOpenChange={setShowAnalysisModal}
+              >
+                <DialogContent className="flex flex-col items-start gap-3 md:gap-5 p-4 md:p-6 bg-[#ffffff33] rounded-[20px] border border-[#7630b5] sm:max-w-[800px] max-h-[90vh] overflow-auto">
+                  <DialogHeader>
+                    <DialogTitle className="flex items-center gap-3 md:gap-6 font-['Inter',Helvetica] font-semibold text-white  text-lg md:text-xl">
+                      <img
+                        className="relative w-8 h-8 md:w-10 md:h-10"
+                        alt="AI Analysis Icon"
+                        src="/frame.svg"
                       />
-                    </div>
+                      AI Analysis
+                    </DialogTitle>
+                  </DialogHeader>
 
-                    <Button className="w-28 md:w-40 h-10 md:h-14 px-4 md:px-6 py-2 md:py-2.5 bg-[#7630b5] rounded-xl font-medium text-sm md:text-base">
-                      Analyze
-                    </Button>
-                  </CardContent>
-                </Card>
-              )}
+                  <div className="flex flex-col items-start gap-3 md:gap-5 relative self-stretch w-full">
+                    <Textarea
+                      className="h-[150px] md:h-[244px] p-3 md:p-5 bg-white rounded-xl border border-solid border-[#7630b5] font-medium text-[#707070] text-sm md:text-base w-full"
+                      placeholder="Paste chat history or any text here..."
+                      value={analyzeText}
+                      onChange={(e) => setAnalyzeText(e.target.value)}
+                    />
+                  </div>
+
+                  <Button className="w-28 md:w-40 h-10 md:h-14 px-4 md:px-6 py-2 md:py-2.5 bg-[#7630b5] rounded-xl font-medium text-sm md:text-base">
+                    Analyze
+                  </Button>
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
         </div>
