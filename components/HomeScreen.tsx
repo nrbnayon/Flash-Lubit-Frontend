@@ -234,12 +234,13 @@ export const HomeScreen = () => {
 
             {/* Center Upload Avatar and Next buttons */}
             <div className="flex flex-col w-full md:w-[300px] lg:w-[424px] items-center gap-4 mt-8 md:-mt-12 md:gap-6 mx-auto mb-4">
-              <Link
+                <Link
                 href="/upload-avatar"
-                className="h-10 md:h-14 w-full bg-[#7630b5] rounded-xl font-medium text-sm md:text-base"
+className="h-10 md:h-14 w-full bg-[#7630b5] rounded-xl font-medium flex justify-center items-center text-white text-sm md:text-base"
               >
                 Upload New Avatar
               </Link>
+              
 
               <Button className="w-[50px] md:w-[60px] p-2 md:p-3 bg-[#7630b5] rounded-[50px]">
                 <Image
