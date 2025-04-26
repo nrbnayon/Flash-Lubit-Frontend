@@ -1,5 +1,5 @@
 "use client";
-import { ArrowDownIcon} from "lucide-react";
+import { ArrowDownIcon } from "lucide-react";
 import { useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -19,6 +19,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import Link from "next/link";
 
 export const HomeScreen = () => {
   // State for user inputs
@@ -75,7 +76,7 @@ export const HomeScreen = () => {
   return (
     <div className="bg-white flex flex-row justify-center w-full">
       <div className="bg-white w-full max-w-[1920px]">
-        <div className="relative min-h-screen bg-[url(/background1.png)] bg-cover bg-[50%_0%] px-4 md:px-6 lg:px-10">
+        <div className="relative min-h-screen bg-[url(/background1.webp)] bg-cover bg-[50%_0%] px-4 md:px-6 lg:px-10">
           {/* Header */}
           <div className="flex justify-between items-center p-4">
             {/* Logo */}
@@ -233,9 +234,12 @@ export const HomeScreen = () => {
 
             {/* Center Upload Avatar and Next buttons */}
             <div className="flex flex-col w-full md:w-[300px] lg:w-[424px] items-center gap-4 mt-8 md:-mt-12 md:gap-6 mx-auto mb-4">
-              <Button className="h-10 md:h-14 w-full bg-[#7630b5] rounded-xl font-medium text-sm md:text-base">
+              <Link
+                href="/upload-avatar"
+                className="h-10 md:h-14 w-full bg-[#7630b5] rounded-xl font-medium text-sm md:text-base"
+              >
                 Upload New Avatar
-              </Button>
+              </Link>
 
               <Button className="w-[50px] md:w-[60px] p-2 md:p-3 bg-[#7630b5] rounded-[50px]">
                 <Image

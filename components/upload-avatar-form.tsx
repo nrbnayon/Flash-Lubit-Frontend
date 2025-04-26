@@ -1,22 +1,28 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState, useRef } from "react"
-import { useRouter } from "next/navigation"
-import { ArrowLeft, Upload } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useToast } from "@/components/ui/use-toast"
-import { Logo } from "@/components/ui/logo"
-import { BackgroundDecoration } from "@/components/ui/background-decoration"
+import { useState, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { ArrowLeft, Upload } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useToast } from "@/components/ui/use-toast";
+import { BackgroundDecoration } from "@/components/ui/background-decoration";
+import Image from "next/image";
 
 export function UploadAvatarForm() {
-  const { toast } = useToast()
-  const router = useRouter()
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const { toast } = useToast();
+  const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState({
     avatarType: "",
@@ -24,86 +30,111 @@ export function UploadAvatarForm() {
     voiceName: "",
     voiceId: "",
     file: null as File | null,
-  })
+  });
 
-  const [fileName, setFileName] = useState("No file choose")
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [fileName, setFileName] = useState("No file choose");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null
-    setFormData({ ...formData, file })
-    setFileName(file ? file.name : "No file choose")
-  }
+    const file = e.target.files?.[0] || null;
+    setFormData({ ...formData, file });
+    setFileName(file ? file.name : "No file choose");
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData({ ...formData, [name]: value })
-  }
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
 
   const handleSelectChange = (value: string) => {
-    setFormData({ ...formData, avatarType: value })
-  }
+    setFormData({ ...formData, avatarType: value });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitting(true)
+    e.preventDefault();
+    setIsSubmitting(true);
 
     // Validate form
-    if (!formData.avatarType || !formData.avatarName || !formData.voiceName || !formData.voiceId) {
+    if (
+      !formData.avatarType ||
+      !formData.avatarName ||
+      !formData.voiceName ||
+      !formData.voiceId
+    ) {
       toast({
         title: "Missing fields",
         description: "Please fill in all required fields",
         variant: "destructive",
-      })
-      setIsSubmitting(false)
-      return
+      });
+      setIsSubmitting(false);
+      return;
     }
 
     try {
       // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500))
+      await new Promise((resolve) => setTimeout(resolve, 1500));
 
       toast({
         title: "Avatar uploaded successfully",
         description: `Avatar "${formData.avatarName}" has been created`,
-      })
+      });
 
       // Navigate back to chat
-      router.push("/")
+      router.push("/");
     } catch (error) {
       toast({
         title: "Upload failed",
         description: "There was an error uploading your avatar",
         variant: "destructive",
-      })
+      });
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-200 via-purple-100 to-pink-200 relative overflow-hidden flex items-center justify-center">
       <BackgroundDecoration />
 
-      {/* Logo */}
-      <Logo className="absolute top-6 left-6" />
+      {/* Header */}
+      <div className="absolute top-0 left-0 w-full flex justify-between items-center p-4">
+        {/* Logo */}
+        <div className="relative z-10">
+          <Image
+            src="/logo-1.png"
+            alt="Logo"
+            width={99}
+            height={80}
+            className="w-[60px] md:w-[80px] lg:w-[99px] h-10 md:h-16 lg:h-20 object-contain"
+            priority
+          />
+        </div>
 
-      <div className="w-full max-w-md mx-auto px-4">
-        <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-lg">
-          <h1 className="text-2xl font-bold text-center text-[#141b34] mb-6">Upload New Avatar</h1>
+        {/* empty to balance */}
+        <div></div>
+
+        {/* empty to balance */}
+        <div></div>
+      </div>
+
+      <div className="w-full max-w-md mx-auto bg-[#FFFFFF66] backdrop-blur-sm rounded-xl p-10 px-6">
+          <h1 className="text-2xl font-bold text-center text-[#141b34] mb-6">
+            Upload New Avatar
+          </h1>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="avatarType">Select Avatar</Label>
-              <Select value={formData.avatarType} onValueChange={handleSelectChange}>
+              <Select
+                value={formData.avatarType}
+                onValueChange={handleSelectChange}
+              >
                 <SelectTrigger id="avatarType" className="w-full">
                   <SelectValue placeholder="Select Avatar Type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="human">Human</SelectItem>
-                  <SelectItem value="cartoon">Cartoon</SelectItem>
-                  <SelectItem value="animal">Animal</SelectItem>
-                  <SelectItem value="custom">Custom</SelectItem>
+                  <SelectItem value="human">AI</SelectItem>
+                  <SelectItem value="cartoon">USER</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -131,7 +162,7 @@ export function UploadAvatarForm() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="voiceId">Elevent labs voice ID</Label>
+              <Label htmlFor="voiceId">Element labs voice ID</Label>
               <Input
                 id="voiceId"
                 name="voiceId"
@@ -152,7 +183,9 @@ export function UploadAvatarForm() {
                   onChange={handleFileChange}
                   className="hidden"
                 />
-                <div className="flex-1 border rounded-l-md bg-white p-2 text-sm truncate">{fileName}</div>
+                <div className="flex-1 border rounded-l-md bg-white p-2 text-sm truncate">
+                  {fileName}
+                </div>
                 <Button
                   type="button"
                   variant="secondary"
@@ -183,8 +216,7 @@ export function UploadAvatarForm() {
               Back to Chat
             </Button>
           </form>
-        </div>
       </div>
     </div>
-  )
+  );
 }
