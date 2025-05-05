@@ -3,7 +3,7 @@ import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } f
 import Cookies from 'js-cookie';
 
 // Constants
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://192.168.10.251:8000/api/';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://192.168.10.251:8000/api';
 const ACCESS_TOKEN_COOKIE = 'accessToken';
 const REFRESH_TOKEN_COOKIE = 'refreshToken';
 
