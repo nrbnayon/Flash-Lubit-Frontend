@@ -1,5 +1,5 @@
 "use client";
-import { ArrowDownIcon } from "lucide-react";
+import { ArrowDownIcon, MicOff } from "lucide-react";
 import { useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -233,23 +233,29 @@ export const HomeScreen = () => {
             </div>
 
             {/* Center Upload Avatar and Next buttons */}
-            <div className="flex flex-col w-full md:w-[300px] lg:w-[424px] items-center gap-4 mt-8 md:-mt-12 md:gap-6 mx-auto mb-4">
-                <Link
+            <div className="flex flex-col max-w-[424px] items-center gap-4 mt-8 md:-mt-12 md:gap-6 mx-auto mb-4 p-0">
+              <Link
                 href="/upload-avatar"
-className="h-10 md:h-14 w-full bg-[#7630b5] rounded-xl font-medium flex justify-center items-center text-white text-sm md:text-base"
+                className="bg-[#7630b5] rounded-xl font-medium flex justify-center items-center text-white text-sm md:text-base h-12 md:h-14 px-6"
               >
                 Upload New Avatar
               </Link>
-              
 
-              <Button className="w-[50px] md:w-[60px] p-2 md:p-3 bg-[#7630b5] rounded-[50px]">
-                <Image
-                  src="/mic-off.svg"
-                  alt="mic off"
-                  width={32}
-                  height={20}
-                  className="w-5 h-5 md:w-6 md:h-6"
-                />
+              <Button className="bg-[#7630b5] rounded-xl text-white font-medium text-sm md:text-base h-12 md:h-14 px-6 flex justify-center items-center">
+                ⏯️ Replay Dialogue
+              </Button>
+
+              <Select>
+                <SelectTrigger className="bg-[#7630b5] rounded-xl border-none text-white font-medium text-sm md:text-base h-12 md:h-14 px-6 flex items-center justify-between gap-2">
+                  <SelectValue placeholder="📂 Select Conversation" />
+                </SelectTrigger>
+                <SelectContent className="bg-white text-black border border-[#7630b5] rounded-xl">
+                  {/* Your Select Items Here */}
+                </SelectContent>
+              </Select>
+
+              <Button className="bg-[#7630b5] rounded-xl text-white font-medium text-sm md:text-base h-12 md:h-14 px-6 flex justify-center items-center">
+                💾 Save This Chat
               </Button>
             </div>
 
