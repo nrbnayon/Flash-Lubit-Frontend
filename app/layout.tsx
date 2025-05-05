@@ -1,22 +1,22 @@
-import type { Metadata } from "next/dist/lib/metadata/types/metadata-interface"
-import { Inter } from "next/font/google"
-import "./globals.css"
-import { ThemeProvider } from "@/components/theme-provider"
+import type { Metadata } from "next/dist/lib/metadata/types/metadata-interface";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "sonner";
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
-const inter = Inter({ subsets: ["latin"] })
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Lukhish - Internal Dialogue",
   description: "A platform for internal dialogue and avatar management",
-    generator: 'v0.dev'
-}
+  generator: "v0.dev",
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   return (
     <html lang='en' suppressHydrationWarning>
@@ -28,7 +28,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
-          <Toaster position='top-right' />
+          <Toaster position='top-center' />
         </ThemeProvider>
       </body>
     </html>

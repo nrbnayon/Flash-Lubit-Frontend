@@ -3,14 +3,13 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { BackgroundDecoration } from "./ui/background-decoration";
 
 export function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
-  const { toast } = useToast();
 
   const handleLogin = async () => {
     try {
@@ -21,21 +20,38 @@ export function Login() {
       });
       if (res.ok) {
         const data = await res.json();
+        toast.success("Login successful", {
+          description: "Welcome back!",
+          style: {
+            background: "#4caf50",
+            color: "white",
+            border: "none",
+          },
+        });
         localStorage.setItem("token", data.token);
         router.push("/");
       } else {
         const errorData = await res.json();
-        toast({
-          title: "Login failed",
-          description: errorData.message || "Invalid credentials",
-          variant: "destructive",
+        const errorMessage = errorData.message || "Invalid credentials";
+        toast.error("Login failed", {
+          description: errorMessage,
+          style: {
+            background: "#ff5757",
+            color: "white",
+            border: "none",
+          },
         });
       }
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "An error occurred",
-        variant: "destructive",
+      const errorMessage =
+        error instanceof Error ? error.message : "Internal server error";
+      toast.error("An error occurred", {
+        description: errorMessage,
+        style: {
+          background: "#ff5757",
+          color: "white",
+          border: "none",
+        },
       });
     }
   };
