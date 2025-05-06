@@ -15,7 +15,14 @@ export function Login() {
 
   const handleLogin = async () => {
     if (!username || !password) {
-      toast.error("Please enter both username and password");
+      toast.error("Incorrect credentials", {
+        description: "Username and password are required.",
+        style: {
+          background: "#ff5757",
+          color: "white",
+          border: "none",
+        },
+      });
       return;
     }
 
@@ -27,7 +34,7 @@ export function Login() {
       });
 
       if (response.data) {
-        console.log("Response.data:", response.data);
+        // console.log("Response.data:", response.data);
         // Save tokens to cookies
         saveTokens({
           accessToken: response.data.accessToken,

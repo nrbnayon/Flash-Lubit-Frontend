@@ -135,10 +135,9 @@ const createAxiosInstance = (config?: AxiosRequestConfig): AxiosInstance => {
 export const saveTokens = (tokens: AuthTokens): void => {
   // Set secure cookie options
   const cookieOptions = {
-    secure: process.env.NODE_ENV === 'production', // Secure in production
-    sameSite: 'strict' as const,
-    path: '/',
-    // You might want to set expires based on your token expiration time
+    secure: process.env.NEXT_PUBLIC_NODE_ENV === "production",
+    sameSite: "strict" as const,
+    path: "/",
   };
 
   Cookies.set(ACCESS_TOKEN_COOKIE, tokens.accessToken, cookieOptions);
@@ -158,10 +157,7 @@ export const clearTokens = (): void => {
  */
 export const handleLogout = (): void => {
   clearTokens();
-  
-  // In a browser environment, you might want to redirect to login
-  // This is now handled by the AuthContext
-};
+  };
 
 /**
  * Get the current access token

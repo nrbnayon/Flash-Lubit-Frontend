@@ -24,19 +24,28 @@ export const speakApi = async (
 ): Promise<SpeakResponse> => {
   try {
     const response = await api.post("/speak", payload);
-    console.log("speakApi response:", response.data);
+    // console.log("speakApi response:", response.data);
     return response.data;
   } catch (error) {
     if (error.response) {
       console.error("speakApi error response:", error.response.data);
-      toast.error(
-        `Failed to send message: ${
-          error.response.data.detail || "Unknown error"
-        }`
-      );
+      toast.error("Failed to send message", {
+        description: error.response.data.detail || "Unknown error",
+        style: {
+          background: "#ff5757",
+          color: "white",
+          border: "none",
+        },
+      });
     } else {
       console.error("Error in speakApi:", error);
-      toast.error("Failed to send message. Please try again.");
+      toast.error("Failed to send message. Please try again.", {
+        style: {
+          background: "#ff5757",
+          color: "white",
+          border: "none",
+        },
+      });
     }
     throw error;
   }
@@ -59,11 +68,17 @@ export interface Avatar {
 export const getAvatarsApi = async (): Promise<Avatar[]> => {
   try {
     const response = await api.get("/avatar");
-    console.log("getAvatarsApi response:", response.data);
+    // console.log("getAvatarsApi response:", response.data);
     return response.data;
   } catch (error) {
     console.error("Error in getAvatarsApi:", error);
-    toast.error("Failed to fetch avatars");
+    toast.error("Failed to fetch avatars", {
+      style: {
+        background: "#ff5757",
+        color: "white",
+        border: "none",
+      },
+    });
     throw error;
   }
 };
@@ -89,11 +104,17 @@ export const saveChatApi = async (
 ): Promise<SavedChat> => {
   try {
     const response = await api.post("/chat-history", payload);
-    console.log("saveChatApi response:", response.data);
+    // console.log("saveChatApi response:", response.data);
     return response.data;
   } catch (error) {
     console.error("Error in saveChatApi:", error);
-    toast.error("Failed to save chat");
+    toast.error("Failed to save chat", {
+      style: {
+        background: "#ff5757",
+        color: "white",
+        border: "none",
+      },
+    });
     throw error;
   }
 };
@@ -101,11 +122,17 @@ export const saveChatApi = async (
 export const getSavedChatsApi = async (): Promise<SavedChat[]> => {
   try {
     const response = await api.get("/chat-history");
-    console.log("getSavedChatsApi response:", response.data);
+    // console.log("getSavedChatsApi response:", response.data);
     return response.data;
   } catch (error) {
     console.error("Error in getSavedChatsApi:", error);
-    toast.error("Failed to fetch saved chats");
+    toast.error("Failed to fetch saved chats", {
+      style: {
+        background: "#ff5757",
+        color: "white",
+        border: "none",
+      },
+    });
     throw error;
   }
 };
@@ -123,11 +150,17 @@ export const getSavedChatApi = async (
 ): Promise<SavedChatDetails> => {
   try {
     const response = await api.get(`/chat-history/${uid}`);
-    console.log("getSavedChatApi response:", response.data);
+    // console.log("getSavedChatApi response:", response.data);
     return response.data;
   } catch (error) {
     console.error("Error in getSavedChatApi:", error);
-    toast.error("Failed to fetch saved chat details");
+    toast.error("Failed to fetch saved chat details", {
+      style: {
+        background: "#ff5757",
+        color: "white",
+        border: "none",
+      },
+    });
     throw error;
   }
 };
@@ -147,28 +180,20 @@ export const replayDialogueApi = async (
 ): Promise<ReplayDialogueResponse> => {
   try {
     const response = await api.post("/replay-dialogue", payload);
-    console.log("replayDialogueApi full response:", response.data);
+    // console.log("replayDialogueApi full response:", response.data);
     return response.data;
   } catch (error) {
     console.error("Error in replayDialogueApi:", error);
-    toast.error("Failed to replay dialogue");
+    toast.error("Failed to replay dialogue", {
+      style: {
+        background: "#ff5757",
+        color: "white",
+        border: "none",
+      },
+    });
     throw error;
   }
 };
-
-// export const replayDialogueApi = async (
-//   payload: ReplayDialoguePayload
-// ): Promise<ReplayDialogueResponse> => {
-//   try {
-//     const response = await api.post("/replay-dialogue", payload);
-//     console.log("replayDialogueApi response:", response.data);
-//     return response.data;
-//   } catch (error) {
-//     console.error("Error in replayDialogueApi:", error);
-//     toast.error("Failed to replay dialogue");
-//     throw error;
-//   }
-// };
 
 interface AnalyzeTextPayload {
   text?: string;
@@ -186,11 +211,17 @@ export const analyzeTextApi = async (
 ): Promise<AnalyzeTextResponse> => {
   try {
     const response = await api.post("/analyze", payload);
-    console.log("analyzeTextApi response:", response.data);
+    // console.log("analyzeTextApi response:", response.data);
     return response.data;
   } catch (error) {
     console.error("Error in analyzeTextApi:", error);
-    toast.error("Failed to analyze text");
+    toast.error("Failed to analyze text", {
+      style: {
+        background: "#ff5757",
+        color: "white",
+        border: "none",
+      },
+    });
     throw error;
   }
 };
