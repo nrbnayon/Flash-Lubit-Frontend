@@ -20,18 +20,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang='en' suppressHydrationWarning>
       <body className={cn("min-h-screen antialiased", inter.className)}>
         <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
+          attribute='class'
+          defaultTheme='light'
           enableSystem
           disableTransitionOnChange
         >
-          {/* <AuthProvider> */}
-            {children}
-          {/* </AuthProvider> */}
-          <Toaster position="top-center" />
+          <AuthProvider>{children}</AuthProvider>
+          <Toaster position='top-center' />
         </ThemeProvider>
       </body>
     </html>

@@ -191,14 +191,14 @@ export const HomeScreen = () => {
     }
 
     if (chatMessages.length === 0) {
-      toast.info("No dialogue to replay.");
+      toast.error("No dialogue to replay.");
       return;
     }
 
     // Use a local variable to track playback state, avoiding React state delay
     let replayActive = true;
     setIsPlaying(true);
-    toast.info("Starting replay...");
+    toast.success("Starting replay...");
 
     try {
       const response = await replayDialogueApi({
@@ -430,16 +430,30 @@ export const HomeScreen = () => {
 
   // Save chat
   const handleSaveChat = async () => {
+    console.log("Save chat button clicked, messages:", chatMessages.length);
+
     if (chatMessages.length === 0) {
-      toast.info("No chat to save.");
+      toast.success("No chat to save.");
       return;
     }
-    const title = prompt("Enter a title for this chat:");
-    if (!title) return;
+
+    // Use setTimeout to ensure this runs after current execution
+    setTimeout(() => {
+      setShowSaveChatDialog(true);
+      console.log("Dialog state set to:", true);
+    }, 0);
+  };
+
+  const submitSaveChat = async () => {
+    if (!chatTitle.trim()) {
+      toast.error("Please enter a title for this chat.");
+      return;
+    }
+
     try {
-      await saveChatApi({ title, conversation_id: conversationId });
+      await saveChatApi({ title: chatTitle, conversation_id: conversationId });
       toast.success("Chat saved successfully!", {
-        description: `Chat "${title}" has been saved.`,
+        description: `Chat "${chatTitle}" has been saved.`,
         style: {
           background: "#7630b5",
           color: "white",
@@ -448,6 +462,8 @@ export const HomeScreen = () => {
       });
       const chats = await getSavedChatsApi();
       setSavedChats(chats);
+      setShowSaveChatDialog(false);
+      setChatTitle("");
     } catch (error) {
       toast.error("Failed to save chat. Please try again.");
     }
@@ -483,7 +499,7 @@ export const HomeScreen = () => {
   // Analyze text
   const handleAnalyzeText = async () => {
     if (!analyzeText.trim()) {
-      toast.info("Please enter text to analyze.");
+      toast.error("Please enter text to analyze.");
       return;
     }
     try {
@@ -520,7 +536,7 @@ export const HomeScreen = () => {
 
     recognition.onstart = () => {
       setActiveMic(sender);
-      toast.info("Microphone is active. Start speaking...");
+      toast.error("Microphone is active. Start speaking...");
     };
 
     recognition.onresult = async (event: any) => {
@@ -539,7 +555,7 @@ export const HomeScreen = () => {
     recognition.onend = () => {
       setActiveMic(null);
       recognitionRef.current = null;
-      toast.info("Microphone stopped.");
+      toast.error("Microphone stopped.");
     };
 
     recognitionRef.current = recognition;
@@ -551,7 +567,7 @@ export const HomeScreen = () => {
       recognitionRef.current.stop();
       recognitionRef.current = null;
       setActiveMic(null);
-      toast.info("Microphone stopped.");
+      toast.success("Microphone stopped.");
     }
   };
 
@@ -793,11 +809,15 @@ export const HomeScreen = () => {
                     />
                     <Button
                       onClick={() => startMic("user")}
-                      className='w-10 md:w-12 p-2 md:p-3 bg-[#7630b5] rounded-[50px]'
+                      className={`w-10 md:w-12 p-2 md:p-3 ${
+                        activeMic === "user" ? "bg-red-500" : "bg-[#7630b5]"
+                      } rounded-[50px]`}
                     >
                       <Image
-                        src='/mic-01.svg'
-                        alt='mic'
+                        src={
+                          activeMic === "user" ? "/mic-off.png" : "/mic-01.svg"
+                        }
+                        alt={activeMic === "user" ? "mic off" : "mic"}
                         width={24}
                         height={24}
                         className='w-5 h-5 md:w-6 md:h-6'
@@ -845,11 +865,15 @@ export const HomeScreen = () => {
                     <Button
                       onClick={() => startMic("ai")}
                       disabled={replyAs === "ai"}
-                      className='w-10 md:w-12 p-2 md:p-3 bg-[#7630b5] rounded-[50px]'
+                      className={`w-10 md:w-12 p-2 md:p-3 ${
+                        activeMic === "ai" ? "bg-red-500" : "bg-[#7630b5]"
+                      } rounded-[50px]`}
                     >
                       <Image
-                        src='/mic-01.svg'
-                        alt='mic'
+                        src={
+                          activeMic === "ai" ? "/mic-off.png" : "/mic-01.svg"
+                        }
+                        alt={activeMic === "ai" ? "mic off" : "mic"}
                         width={24}
                         height={24}
                         className='w-5 h-5 md:w-6 md:h-6'
@@ -866,16 +890,21 @@ export const HomeScreen = () => {
                 </div>
                 <Button
                   onClick={stopMic}
-                  className='h-10 md:h-14 gap-2 px-4 md:px-6 py-2 md:py-2.5 bg-[#7630b5] rounded-xl font-medium text-sm md:text-base mt-3 md:mt-0 w-full md:w-auto'
+                  disabled={!activeMic}
+                  className={`h-10 md:h-14 gap-2 px-4 md:px-6 py-2 md:py-2.5 ${
+                    activeMic ? "bg-red-500" : "bg-[#7630b5] opacity-60"
+                  } rounded-xl font-medium text-sm md:text-base mt-3 md:mt-0 w-full md:w-auto`}
                 >
                   <Image
-                    src='/mic-off.svg'
+                    src='/mic-off.png'
                     alt='mic off'
                     width={24}
                     height={24}
                     className='w-5 h-5 md:w-6 md:h-6'
                   />
-                  Stop Mic
+                  {activeMic
+                    ? `Stop ${activeMic === "user" ? "User" : "AI"} Mic`
+                    : "Stop Mic"}
                 </Button>
               </CardContent>
             </Card>
@@ -918,6 +947,50 @@ export const HomeScreen = () => {
                 >
                   Analyze
                 </Button>
+              </DialogContent>
+            </Dialog>
+            {/* Save Chat Dialog */}
+            <Dialog
+              open={showSaveChatDialog}
+              onOpenChange={(open) => {
+                setShowSaveChatDialog(open);
+                if (!open) setChatTitle("");
+              }}
+            >
+              <DialogContent className='flex flex-col items-start gap-4 p-6 bg-white rounded-xl border border-[#7630b5] sm:max-w-[500px]'>
+                <DialogHeader className='w-full'>
+                  <DialogTitle className="font-['Inter',Helvetica] font-semibold text-[#7630b5] text-xl text-center">
+                    Save Conversation
+                  </DialogTitle>
+                </DialogHeader>
+                <div className='flex flex-col items-start gap-3 w-full'>
+                  <label className='font-medium text-[#101010]'>
+                    Conversation Title
+                  </label>
+                  <Input
+                    className='h-12 p-4 bg-white rounded-xl border border-solid border-[#7630b5] font-medium text-[#101010] w-full'
+                    placeholder='Enter a title for this conversation'
+                    value={chatTitle}
+                    onChange={(e) => setChatTitle(e.target.value)}
+                    autoFocus
+                  />
+                </div>
+                <div className='flex justify-end gap-4 w-full mt-4'>
+                  <Button
+                    variant='outline'
+                    onClick={() => setShowSaveChatDialog(false)}
+                    className='h-12 px-6 py-2.5 border border-solid border-[#7630b5] text-[#7630b5] rounded-xl font-medium'
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={submitSaveChat}
+                    className='h-12 px-6 py-2.5 bg-[#7630b5] rounded-xl font-medium'
+                    disabled={!chatTitle.trim()}
+                  >
+                    Save
+                  </Button>
+                </div>
               </DialogContent>
             </Dialog>
           </div>
