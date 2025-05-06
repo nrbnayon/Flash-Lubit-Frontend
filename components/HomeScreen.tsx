@@ -37,11 +37,13 @@ declare global {
   interface Window {
     SpeechRecognition: any;
     webkitSpeechRecognition: any;
+    stopReplay?: () => void;
   }
 }
 
 interface Message {
   text: string;
+  reply_text?: string;
   sender: "user" | "ai";
   audioUrl?: string;
 }
@@ -50,6 +52,7 @@ const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_ASSETS_URL || "http://192.168.10.251:8000";
 
 const getFullUrl = (path: string): string => {
+  if (!path) return "";
   if (path.startsWith("http")) return path;
   // console.log("Get audio::", `${API_BASE_URL}/media/${path}`);
   return `${API_BASE_URL}/media/${path}`;
@@ -80,6 +83,9 @@ export const HomeScreen = () => {
   const recognitionRef = useRef<any | null>(null);
   const currentAudioRef = useRef<HTMLAudioElement | null>(null);
   const currentVideoRef = useRef<HTMLVideoElement | null>(null);
+  const [activeMic, setActiveMic] = useState<"user" | "ai" | null>(null);
+  const [showSaveChatDialog, setShowSaveChatDialog] = useState<boolean>(false);
+  const [chatTitle, setChatTitle] = useState<string>("");
 
   // Fetch avatars and saved chats on mount
   useEffect(() => {
@@ -209,6 +215,7 @@ export const HomeScreen = () => {
         const msg = chat_list[i];
         const audio = audio_list[i];
         const sender = msg.user ? "user" : "ai";
+        if (!sender) continue;
         const audioPath = sender === "user" ? audio.user : audio.ai;
 
         if (!audioPath) {
@@ -259,7 +266,7 @@ export const HomeScreen = () => {
                 videoRef.current.pause();
                 videoRef.current.currentTime = 0;
               }
-              resolve();
+              resolve(undefined);
             });
 
             audioElement.addEventListener("error", (e) => {
@@ -328,7 +335,7 @@ export const HomeScreen = () => {
 
   // Improved playAudioWithVideo function
   const playAudioWithVideo = async (
-    videoRef: React.RefObject<HTMLVideoElement>,
+    videoRef: React.RefObject<HTMLVideoElement | null>,
     audioUrl: string
   ) => {
     if (!audioUrl) {
@@ -453,11 +460,13 @@ export const HomeScreen = () => {
       setConversationId(chatDetails.conversation_id);
       const messages = chatDetails.chat_dict.map((msg, index) => {
         const sender = msg.user ? "user" : "ai";
-        const text = msg.user || msg.ai;
-        const audioUrl = getFullUrl(chatDetails.audio_dict[index][sender]);
+        const text = msg.user || msg.ai || "";
+        const audioUrl = getFullUrl(
+          chatDetails.audio_dict[index][sender] || ""
+        );
         return { text, sender, audioUrl };
       });
-      setChatMessages(messages);
+      setChatMessages(messages as Message[]);
       toast.success("Chat loaded successfully!", {
         description: `Loaded chat: ${chatDetails?.title}`,
         style: {
@@ -488,6 +497,12 @@ export const HomeScreen = () => {
 
   // Voice input
   const startMic = (sender: "user" | "ai") => {
+    // If this mic is already active, stop it
+    if (activeMic === sender) {
+      stopMic();
+      return;
+    }
+
     const SpeechRecognition =
       window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
@@ -495,35 +510,38 @@ export const HomeScreen = () => {
       return;
     }
 
+    // Stop any existing recording first
+    stopMic();
+
     const recognition = new SpeechRecognition();
     recognition.lang = "en-US";
     recognition.interimResults = false;
     recognition.continuous = false;
 
     recognition.onstart = () => {
+      setActiveMic(sender);
       toast.info("Microphone is active. Start speaking...");
     };
 
-    recognition.onresult = async (event) => {
+    recognition.onresult = async (event: any) => {
       const text = event.results[0][0].transcript;
       if (sender === "user") setLeftUserInput(text);
       else setRightUserInput(text);
       await handleSendMessage(text, sender);
     };
 
-    recognition.onerror = (event) => {
+    recognition.onerror = (event: any) => {
+      setActiveMic(null);
       toast.error(`Speech recognition error: ${event.error}`);
       recognition.stop();
     };
 
     recognition.onend = () => {
+      setActiveMic(null);
       recognitionRef.current = null;
       toast.info("Microphone stopped.");
     };
 
-    if (recognitionRef.current) {
-      recognitionRef.current.stop();
-    }
     recognitionRef.current = recognition;
     recognition.start();
   };
@@ -532,7 +550,8 @@ export const HomeScreen = () => {
     if (recognitionRef.current) {
       recognitionRef.current.stop();
       recognitionRef.current = null;
-      toast.info("Microphone stopped manually.");
+      setActiveMic(null);
+      toast.info("Microphone stopped.");
     }
   };
 
@@ -601,7 +620,11 @@ export const HomeScreen = () => {
                         {leftAvatars.map((voice) => (
                           <SelectItem
                             key={voice.uid}
-                            value={voice?.voice_name || "N/A"}
+                            value={
+                              voice?.voice_name ||
+                              selectedLeftAvatar?.voice_name ||
+                              "N/A"
+                            }
                           >
                             {voice?.voice_name || "N/A"}
                           </SelectItem>
@@ -652,7 +675,11 @@ export const HomeScreen = () => {
                         {rightAvatars.map((avatar) => (
                           <SelectItem
                             key={avatar.uid}
-                            value={avatar.voice_name}
+                            value={
+                              avatar.voice_name ||
+                              selectedRightAvatar?.voice_name ||
+                              "N/A"
+                            }
                           >
                             {avatar.voice_name || "N/A"}
                           </SelectItem>
@@ -817,6 +844,7 @@ export const HomeScreen = () => {
                     />
                     <Button
                       onClick={() => startMic("ai")}
+                      disabled={replyAs === "ai"}
                       className='w-10 md:w-12 p-2 md:p-3 bg-[#7630b5] rounded-[50px]'
                     >
                       <Image

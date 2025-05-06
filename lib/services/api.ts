@@ -27,10 +27,10 @@ export const speakApi = async (
     // console.log("speakApi response:", response.data);
     return response.data;
   } catch (error) {
-    if (error.response) {
-      console.error("speakApi error response:", error.response.data);
+    if (error instanceof Error && 'response' in error && error.response) {
+      console.error("speakApi error response:", (error as any).response.data);
       toast.error("Failed to send message", {
-        description: error.response.data.detail || "Unknown error",
+        description: (error as any).response.data.detail || "Unknown error",
         style: {
           background: "#ff5757",
           color: "white",
