@@ -1,18 +1,26 @@
+// lib\types.ts
 export interface User {
-  id: string
-  name: string
-  avatarUrl: string
-  voiceId?: string
+  id: string;
+  username?: string;
+  email?: string;
+  avatarUrl?: string;
+  voiceId?: string;
+}
+
+export interface AuthTokens {
+  accessToken: string;
+  refreshToken: string;
 }
 
 export interface Avatar {
-  id: string
-  name: string
-  type: string
-  imageUrl: string
-  voiceName: string
-  voiceId: string
-  createdAt: Date
+  id: string;
+  name: string;
+  type: string;
+  imageUrl: string;
+  voiceName: string;
+  voiceId: string;
+  voice_options?: string;
+  createdAt: Date;
 }
 
 export interface Message {

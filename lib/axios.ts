@@ -1,11 +1,12 @@
 // lib\axios.ts
+// lib\axios.ts
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import Cookies from 'js-cookie';
 
 // Constants
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://192.168.10.251:8000/api';
-const ACCESS_TOKEN_COOKIE = 'accessToken';
-const REFRESH_TOKEN_COOKIE = 'refreshToken';
+const ACCESS_TOKEN_COOKIE = "accessToken";
+const REFRESH_TOKEN_COOKIE = "refreshToken";
 
 // Type for auth tokens
 interface AuthTokens {
@@ -96,7 +97,7 @@ const createAxiosInstance = (config?: AxiosRequestConfig): AxiosInstance => {
 
         // Call refresh token endpoint
         const { data }: AxiosResponse<AuthTokens> = await axios.post(
-          `${API_BASE_URL}/auth/refresh-token`,
+          `${API_BASE_URL}/refresh-token`,
           { refreshToken },
           { withCredentials: true }
         );
@@ -159,15 +160,7 @@ export const handleLogout = (): void => {
   clearTokens();
   
   // In a browser environment, you might want to redirect to login
-  if (typeof window !== 'undefined') {
-    // You can use Next.js router for redirection if needed
-    // import { useRouter } from 'next/router';
-    // const router = useRouter();
-    // router.push('/login');
-    
-    // Or use window.location for a simpler approach
-    // window.location.href = '/login';
-  }
+  // This is now handled by the AuthContext
 };
 
 /**
