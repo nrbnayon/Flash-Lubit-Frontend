@@ -1,4 +1,5 @@
-import type { Config } from "tailwindcss"
+import type { Config } from "tailwindcss";
+import plugin from "tailwindcss/plugin";
 
 const config = {
   darkMode: ["class"],
@@ -83,7 +84,34 @@ const config = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
-} satisfies Config
+  plugins: [
+    require("tailwindcss-animate"),
+    plugin(({ addUtilities }) => {
+      const newUtilities = {
+        ".custom-scrollbar": {
+          "&::-webkit-scrollbar": {
+            width: "0px",
+            height: "0px",
+          },
+          "&::-webkit-scrollbar-track": {
+            backgroundColor: "transparent", // Set track background to transparent
+            borderRadius: "100vh",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            backgroundColor: "transparent", // Set thumb background to transparent
+            borderRadius: "100vh",
+          },
+          "&::-webkit-scrollbar-thumb:hover": {
+            backgroundColor: "transparent", // Set hover background to transparent
+            opacity: "0.0",
+          },
+          scrollbarWidth: "thin",
+          scrollbarColor: "transparent transparent", // Set scrollbar colors to transparent
+        },
+      };
+      addUtilities(newUtilities);
+    }),
+  ],
+} satisfies Config;
 
-export default config
+export default config;

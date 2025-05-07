@@ -10,9 +10,24 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+/* .scrollbar-hide::-webkit-scrollbar {
+  width: 6px;
 }
 
+.scrollbar-hide::-webkit-scrollbar-thumb {
+  background-color: #7630b5;
+  border-radius: 10px;
+}
 
+.scrollbar-hide::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-hide {
+  scrollbar-width: thin;
+  scrollbar-color: #7630b5 transparent;
+} */
+}
 
 @layer base {
   :root {
@@ -87,23 +102,10 @@ body {
   }
 }
 
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-
-/* For IE, Edge and Firefox */
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  /* IE and Edge */
-  scrollbar-width: none;
-  /* Firefox */
-}
-
 @layer base {
   * {
     @apply border-border;
   }
-
   body {
     @apply bg-background text-foreground;
   }

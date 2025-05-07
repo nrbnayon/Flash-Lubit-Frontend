@@ -100,6 +100,8 @@ export function UploadAvatarForm() {
       );
       avatarFormData.append("video", formData.video);
 
+      console.log("Form data prepared for submission:", avatarFormData);
+
       // console.log("Sending API request to create avatar");
 
       // Use axios to post the form data
@@ -112,6 +114,8 @@ export function UploadAvatarForm() {
           },
         }
       );
+
+      console.log("Avatar created successfully:", response.data);
 
       // console.log("API response received:", response.data);
 
