@@ -86,6 +86,18 @@ export const HomeScreen = () => {
   const [activeMic, setActiveMic] = useState<"user" | "ai" | null>(null);
   const [showSaveChatDialog, setShowSaveChatDialog] = useState<boolean>(false);
   const [chatTitle, setChatTitle] = useState<string>("");
+  const leftMessagesEndRef = useRef<HTMLDivElement | null>(null);
+  const rightMessagesEndRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    // Scroll to the latest message when chatMessages changes
+    if (leftMessagesEndRef.current) {
+      leftMessagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+    if (rightMessagesEndRef.current) {
+      rightMessagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [chatMessages]);
 
   // Fetch avatars and saved chats on mount
   useEffect(() => {
@@ -483,6 +495,16 @@ export const HomeScreen = () => {
         return { text, sender, audioUrl };
       });
       setChatMessages(messages as Message[]);
+
+      setTimeout(() => {
+        if (leftMessagesEndRef.current) {
+          leftMessagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+        }
+        if (rightMessagesEndRef.current) {
+          rightMessagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 100);
+
       toast.success("Chat loaded successfully!", {
         description: `Loaded chat: ${chatDetails?.title}`,
         style: {
@@ -572,23 +594,23 @@ export const HomeScreen = () => {
   };
 
   return (
-    <div className='bg-white flex flex-row justify-center w-full'>
-      <div className='bg-white w-full max-w-[1920px]'>
-        <div className='relative min-h-screen bg-[url(/background1.webp)] bg-cover bg-[50%_0%] px-4 md:px-6 lg:px-10'>
+    <div className="bg-white flex flex-row justify-center w-full">
+      <div className="bg-white w-full max-w-[1920px]">
+        <div className="relative min-h-screen bg-[url(/background1.webp)] bg-cover bg-[50%_0%] px-4 md:px-6 lg:px-10">
           {/* Header */}
-          <div className='flex justify-between items-center p-4'>
+          <div className="flex justify-between items-center p-4">
             <Image
-              src='/logo-1.png'
-              alt='Logo'
+              src="/logo-1.png"
+              alt="Logo"
               width={99}
               height={80}
-              className='w-[60px] md:w-[80px] lg:w-[99px] h-10 md:h-16 lg:h-20 object-cover'
+              className="w-[60px] md:w-[80px] lg:w-[99px] h-10 md:h-16 lg:h-20 object-cover"
             />
             <h1 className="font-['Inter',Helvetica] font-semibold text-[#101010] text-2xl md:text-4xl lg:text-[56px] text-center tracking-[0] leading-[normal]">
               Internal Dialogue
             </h1>
             <Button
-              className='w-[160px] md:w-[220px] h-10 md:h-14 gap-2.5 px-4 md:px-6 py-2 md:py-2.5 bg-[#7630b5] rounded-xl font-medium text-sm md:text-base'
+              className="w-[160px] md:w-[220px] h-10 md:h-14 gap-2.5 px-4 md:px-6 py-2 md:py-2.5 bg-[#7630b5] rounded-xl font-medium text-sm md:text-base"
               onClick={() => setShowAnalysisModal(!showAnalysisModal)}
             >
               {showAnalysisModal ? "Hide AI Analysis" : "Show AI Analysis"}
@@ -596,19 +618,19 @@ export const HomeScreen = () => {
           </div>
 
           {/* Main Content Area */}
-          <div className='pt-10 pb-8 px-2 md:px-6 lg:px-12 max-w-full mx-auto'>
-            <div className='flex flex-col lg:flex-row justify-between gap-6 md:gap-8 lg:gap-12'>
+          <div className="pt-10 pb-8 px-2 md:px-6 lg:px-12 max-w-full mx-auto">
+            <div className="flex flex-col lg:flex-row justify-between gap-6 md:gap-8 lg:gap-12">
               {/* Left Character and Chat (USER) */}
-              <div className='flex flex-col md:flex-row lg:flex-row items-center md:items-start lg:items-start gap-4 md:gap-8 lg:gap-12 w-full lg:w-1/2'>
-                <div className='flex flex-col w-full md:w-[300px] lg:w-[401px] items-center gap-[15px]'>
+              <div className="flex flex-col md:flex-row lg:flex-row items-center md:items-start lg:items-start gap-4 md:gap-8 lg:gap-12 w-full lg:w-1/2">
+                <div className="flex flex-col w-full md:w-[300px] lg:w-[401px] items-center gap-[15px]">
                   <video
                     ref={leftVideoRef}
                     src={selectedLeftAvatar?.video}
-                    className='w-full h-auto md:h-[360px] lg:h-[482px] object-cover rounded-lg'
+                    className="w-full h-auto md:h-[360px] lg:h-[482px] object-cover rounded-lg"
                     muted
                     playsInline
                   />
-                  <div className='flex w-full md:w-[280px] lg:w-[312px] items-center gap-3 md:gap-5 lg:gap-7'>
+                  <div className="flex w-full md:w-[280px] lg:w-[312px] items-center gap-3 md:gap-5 lg:gap-7">
                     <Select
                       value={selectedLeftAvatar?.uid}
                       onValueChange={(value) =>
@@ -617,8 +639,8 @@ export const HomeScreen = () => {
                         )
                       }
                     >
-                      <SelectTrigger className='h-10 md:h-12 flex-1 bg-[#ffffff4c] rounded-xl border border-solid border-[#7630b5] px-3 py-2 md:px-4 md:py-2.5'>
-                        <SelectValue placeholder='Select User' />
+                      <SelectTrigger className="h-10 md:h-12 flex-1 bg-[#ffffff4c] rounded-xl border border-solid border-[#7630b5] px-3 py-2 md:px-4 md:py-2.5">
+                        <SelectValue placeholder="Select User" />
                       </SelectTrigger>
                       <SelectContent>
                         {leftAvatars.map((avatar) => (
@@ -629,8 +651,8 @@ export const HomeScreen = () => {
                       </SelectContent>
                     </Select>
                     <Select>
-                      <SelectTrigger className='h-10 md:h-12 flex-1 bg-[#ffffff4c] rounded-xl border border-solid border-[#7630b5] px-3 py-2 md:px-4 md:py-2.5'>
-                        <SelectValue placeholder='Voice' />
+                      <SelectTrigger className="h-10 md:h-12 flex-1 bg-[#ffffff4c] rounded-xl border border-solid border-[#7630b5] px-3 py-2 md:px-4 md:py-2.5">
+                        <SelectValue placeholder="Voice" />
                       </SelectTrigger>
                       <SelectContent>
                         {leftAvatars.map((voice) => (
@@ -649,33 +671,34 @@ export const HomeScreen = () => {
                     </Select>
                   </div>
                 </div>
-                <div className='flex flex-col w-full md:w-[250px] lg:w-[299px] items-start gap-8 md:gap-12 lg:gap-20 px-0 py-4 md:py-6 lg:py-10 overflow-y-auto max-h-[482px]'>
+                <div className="flex flex-col w-full md:w-[250px] lg:w-[299px] items-start gap-8 md:gap-12 lg:gap-20 px-0 py-4 md:py-6 lg:py-10 overflow-y-auto max-h-[482px] scrollbar-hide">
                   {chatMessages
                     .filter((msg) => msg.sender === "user")
                     .map((msg, index) => (
                       <div
                         key={`left-message-${index}`}
-                        className='flex flex-col self-stretch w-full items-center justify-center gap-2.5 p-2.5 bg-[#7630b599] rounded-[20px_20px_20px_4px]'
+                        className="flex flex-col w-auto max-w-full items-start justify-center gap-2.5 p-2.5 bg-[#7630b599] rounded-[20px_20px_20px_4px] self-start"
                       >
-                        <p className="self-stretch mt-[-1.00px] font-['Inter',Helvetica] font-medium text-white text-sm md:text-base tracking-[0] leading-[normal]">
+                        <p className="self-stretch font-['Inter',Helvetica] font-medium text-white text-sm md:text-base tracking-[0] leading-[normal]">
                           {msg.text}
                         </p>
                       </div>
                     ))}
+                  <div ref={leftMessagesEndRef} /> {/* Auto-scroll anchor */}
                 </div>
               </div>
 
               {/* Right Character and Chat (AI) */}
-              <div className='flex flex-col md:flex-row-reverse lg:flex-row-reverse items-center md:items-start lg:items-start gap-4 md:gap-8 lg:gap-12 w-full lg:w-1/2'>
-                <div className='flex flex-col w-full md:w-[300px] lg:w-[402px] items-center gap-[15px]'>
+              <div className="flex flex-col md:flex-row-reverse lg:flex-row-reverse items-center md:items-start lg:items-start gap-4 md:gap-8 lg:gap-12 w-full lg:w-1/2">
+                <div className="flex flex-col w-full md:w-[300px] lg:w-[402px] items-center gap-[15px]">
                   <video
                     ref={rightVideoRef}
                     src={selectedRightAvatar?.video}
-                    className='w-full h-auto md:h-[360px] lg:h-[482px] object-cover rounded-lg'
+                    className="w-full h-auto md:h-[360px] lg:h-[482px] object-cover rounded-lg"
                     muted
                     playsInline
                   />
-                  <div className='flex w-full md:w-[280px] lg:w-[312px] items-center gap-3 md:gap-5 lg:gap-7'>
+                  <div className="flex w-full md:w-[280px] lg:w-[312px] items-center gap-3 md:gap-5 lg:gap-7">
                     <Select
                       value={selectedRightAvatar?.voice_name}
                       onValueChange={(value) =>
@@ -684,8 +707,8 @@ export const HomeScreen = () => {
                         )
                       }
                     >
-                      <SelectTrigger className='h-10 md:h-12 flex-1 bg-[#ffffff4c] rounded-xl border border-solid border-[#7630b5] px-3 py-2 md:px-4 md:py-2.5'>
-                        <SelectValue placeholder='Select AI Voice' />
+                      <SelectTrigger className="h-10 md:h-12 flex-1 bg-[#ffffff4c] rounded-xl border border-solid border-[#7630b5] px-3 py-2 md:px-4 md:py-2.5">
+                        <SelectValue placeholder="Select AI Voice" />
                       </SelectTrigger>
                       <SelectContent>
                         {rightAvatars.map((avatar) => (
@@ -704,8 +727,8 @@ export const HomeScreen = () => {
                     </Select>
 
                     <Select>
-                      <SelectTrigger className='h-10 md:h-12 flex-1 bg-[#ffffff4c] rounded-xl border border-solid border-[#7630b5] px-3 py-2 md:px-4 md:py-2.5'>
-                        <SelectValue placeholder='Voice' />
+                      <SelectTrigger className="h-10 md:h-12 flex-1 bg-[#ffffff4c] rounded-xl border border-solid border-[#7630b5] px-3 py-2 md:px-4 md:py-2.5">
+                        <SelectValue placeholder="Voice" />
                       </SelectTrigger>
                       <SelectContent>
                         {rightAvatars.map((voice) => (
@@ -720,42 +743,43 @@ export const HomeScreen = () => {
                     </Select>
                   </div>
                 </div>
-                <div className='flex flex-col w-full md:w-[250px] lg:w-[350px] items-end gap-8 md:gap-12 lg:gap-20 pt-4 md:pt-10 lg:pt-20 pb-0 px-0 overflow-y-auto max-h-[482px]'>
+                <div className="flex flex-col w-full md:w-[250px] lg:w-[350px] items-end gap-8 md:gap-12 lg:gap-20 pt-4 md:pt-10 lg:pt-20 pb-0 px-0 overflow-y-auto max-h-[482px] scrollbar-hide">
                   {chatMessages
                     .filter((msg) => msg.sender === "ai")
                     .map((msg, index) => (
                       <div
                         key={`right-message-${index}`}
-                        className='flex flex-col self-stretch w-full items-center justify-center gap-2.5 p-2.5 bg-white rounded-[20px_20px_4px_20px] ml-auto'
+                        className="flex flex-col w-auto max-w-full items-center justify-center gap-2.5 p-2.5 bg-white rounded-[20px_20px_4px_20px] self-end"
                       >
-                        <p className="self-stretch mt-[-1.00px] font-['Inter',Helvetica] font-medium text-[#7630b5] text-sm md:text-base text-center tracking-[0] leading-[normal]">
+                        <p className="self-stretch font-['Inter',Helvetica] font-medium text-[#7630b5] text-sm md:text-base tracking-[0] leading-[normal]">
                           {msg.text}
                         </p>
                       </div>
                     ))}
+                  <div ref={rightMessagesEndRef} /> {/* Auto-scroll anchor */}
                 </div>
               </div>
             </div>
 
             {/* Center Controls */}
-            <div className='flex flex-col max-w-[424px] items-center gap-4 mt-8 md:-mt-12 md:gap-6 mx-auto mb-4 p-0'>
+            <div className="flex flex-col max-w-[424px] items-center gap-4 mt-8 md:-mt-12 md:gap-6 mx-auto mb-4 p-0">
               <Link
-                href='/upload-avatar'
-                className='bg-[#7630b5] rounded-xl font-medium flex justify-center items-center text-white text-sm md:text-base h-12 md:h-14 px-6'
+                href="/upload-avatar"
+                className="bg-[#7630b5] rounded-xl font-medium flex justify-center items-center text-white text-sm md:text-base h-12 md:h-14 px-6"
               >
                 Upload New Avatar
               </Link>
               <Button
                 onClick={handleReplayDialogue}
-                className='bg-[#7630b5] rounded-xl text-white font-medium text-sm md:text-base h-12 md:h-14 px-6 flex justify-center items-center'
+                className="bg-[#7630b5] rounded-xl text-white font-medium text-sm md:text-base h-12 md:h-14 px-6 flex justify-center items-center"
               >
                 {isPlaying ? "⏸️ Pause Dialogue" : "⏯️ Replay Dialogue"}
               </Button>
               <Select onValueChange={handleLoadChat}>
-                <SelectTrigger className='bg-[#7630b5] rounded-xl border-none text-white font-medium text-sm md:text-base h-12 md:h-14 px-6 flex items-center justify-between gap-2'>
-                  <SelectValue placeholder='📂 Select Conversation' />
+                <SelectTrigger className="bg-[#7630b5] rounded-xl border-none text-white font-medium text-sm md:text-base h-12 md:h-14 px-6 flex items-center justify-between gap-2">
+                  <SelectValue placeholder="📂 Select Conversation" />
                 </SelectTrigger>
-                <SelectContent className='bg-white text-black border border-[#7630b5] rounded-xl'>
+                <SelectContent className="bg-white text-black border border-[#7630b5] rounded-xl">
                   {savedChats.map((chat) => (
                     <SelectItem key={chat.uid} value={chat.uid}>
                       {chat.title}
@@ -765,15 +789,15 @@ export const HomeScreen = () => {
               </Select>
               <Button
                 onClick={handleSaveChat}
-                className='bg-[#7630b5] rounded-xl text-white font-medium text-sm md:text-base h-12 md:h-14 px-6 flex justify-center items-center'
+                className="bg-[#7630b5] rounded-xl text-white font-medium text-sm md:text-base h-12 md:h-14 px-6 flex justify-center items-center"
               >
                 💾 Save This Chat
               </Button>
             </div>
 
             {/* Bottom Controls */}
-            <Card className='flex flex-col md:flex-row items-center gap-3 p-3 md:p-4 lg:p-6 relative self-stretch w-full bg-[#ffffff4c] rounded-[20px]'>
-              <CardContent className='flex flex-col md:flex-row items-center gap-3 p-0 w-full'>
+            <Card className="flex flex-col md:flex-row items-center gap-3 p-3 md:p-4 lg:p-6 relative self-stretch w-full bg-[#ffffff4c] rounded-[20px]">
+              <CardContent className="flex flex-col md:flex-row items-center gap-3 p-0 w-full">
                 <Button
                   onClick={() => {
                     setConversationId(uuidv4());
@@ -791,15 +815,15 @@ export const HomeScreen = () => {
                       }
                     );
                   }}
-                  className='h-10 md:h-14 bg-[#7630b5] rounded-xl font-medium text-sm md:text-base w-full md:w-auto'
+                  className="h-10 md:h-14 bg-[#7630b5] rounded-xl font-medium text-sm md:text-base w-full md:w-auto"
                 >
                   Start New Conversation
                 </Button>
-                <div className='flex flex-col md:flex-row items-center gap-3 w-full'>
-                  <div className='flex items-center gap-2 md:gap-4 px-2 md:px-4 py-2 md:py-3 relative flex-1 bg-[#ffffff33] rounded-xl w-full md:w-auto'>
+                <div className="flex flex-col md:flex-row items-center gap-3 w-full">
+                  <div className="flex items-center gap-2 md:gap-4 px-2 md:px-4 py-2 md:py-3 relative flex-1 bg-[#ffffff33] rounded-xl w-full md:w-auto">
                     <Input
-                      className='h-10 md:h-12 flex-1 bg-white rounded-[50px] border border-solid border-[#7630b5] px-3 md:px-4 py-2 md:py-2.5 font-medium text-[#101010] text-xs'
-                      placeholder='User says...'
+                      className="h-10 md:h-12 flex-1 bg-white rounded-[50px] border border-solid border-[#7630b5] px-3 md:px-4 py-2 md:py-2.5 font-medium text-[#101010] text-xs"
+                      placeholder="User says..."
                       value={leftUserInput}
                       onChange={(e) => setLeftUserInput(e.target.value)}
                       onKeyPress={(e) =>
@@ -820,41 +844,41 @@ export const HomeScreen = () => {
                         alt={activeMic === "user" ? "mic off" : "mic"}
                         width={24}
                         height={24}
-                        className='w-5 h-5 md:w-6 md:h-6'
+                        className="w-5 h-5 md:w-6 md:h-6"
                       />
                     </Button>
                     <Button
                       onClick={() => handleSendMessage(leftUserInput, "user")}
-                      className='h-10 md:h-12 px-4 md:px-6 py-2 md:py-[7px] bg-[#7630b5] rounded-xl font-medium text-sm md:text-base'
+                      className="h-10 md:h-12 px-4 md:px-6 py-2 md:py-[7px] bg-[#7630b5] rounded-xl font-medium text-sm md:text-base"
                     >
                       Send
                     </Button>
                   </div>
-                  <div className='flex items-center gap-2 mt-3 md:mt-0'>
+                  <div className="flex items-center gap-2 mt-3 md:mt-0">
                     <Select value={personality} onValueChange={setPersonality}>
-                      <SelectTrigger className='w-[110px] md:w-[142px] h-10 md:h-12 bg-[#ffffff4c] rounded-xl border border-solid border-[#7630b5] px-3 md:px-4 py-2 md:py-2.5'>
+                      <SelectTrigger className="w-[110px] md:w-[142px] h-10 md:h-12 bg-[#ffffff4c] rounded-xl border border-solid border-[#7630b5] px-3 md:px-4 py-2 md:py-2.5">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value='friendly'>Friendly</SelectItem>
-                        <SelectItem value='formal'>Formal</SelectItem>
-                        <SelectItem value='casual'>Casual</SelectItem>
+                        <SelectItem value="friendly">Friendly</SelectItem>
+                        <SelectItem value="formal">Formal</SelectItem>
+                        <SelectItem value="casual">Casual</SelectItem>
                       </SelectContent>
                     </Select>
                     <Select value={replyAs} onValueChange={setReplyAs}>
-                      <SelectTrigger className='w-[110px] md:w-[142px] h-10 md:h-12 bg-[#ffffff4c] rounded-xl border border-solid border-[#7630b5] px-3 md:px-4 py-2 md:py-2.5'>
+                      <SelectTrigger className="w-[110px] md:w-[142px] h-10 md:h-12 bg-[#ffffff4c] rounded-xl border border-solid border-[#7630b5] px-3 md:px-4 py-2 md:py-2.5">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value='ai'>Reply as AI</SelectItem>
-                        <SelectItem value='user'>Reply as User</SelectItem>
+                        <SelectItem value="ai">Reply as AI</SelectItem>
+                        <SelectItem value="user">Reply as User</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className='flex items-center gap-2 md:gap-4 px-2 md:px-4 py-2 md:py-3 relative flex-1 bg-[#ffffff33] rounded-xl w-full md:w-auto mt-3 md:mt-0'>
+                  <div className="flex items-center gap-2 md:gap-4 px-2 md:px-4 py-2 md:py-3 relative flex-1 bg-[#ffffff33] rounded-xl w-full md:w-auto mt-3 md:mt-0">
                     <Input
-                      className='h-10 md:h-12 flex-1 bg-white rounded-[50px] border border-solid border-[#7630b5] px-3 md:px-4 py-2 md:py-2.5 font-medium text-[#101010] text-xs'
-                      placeholder='AI says...'
+                      className="h-10 md:h-12 flex-1 bg-white rounded-[50px] border border-solid border-[#7630b5] px-3 md:px-4 py-2 md:py-2.5 font-medium text-[#101010] text-xs"
+                      placeholder="AI says..."
                       value={rightUserInput}
                       onChange={(e) => setRightUserInput(e.target.value)}
                       onKeyPress={(e) =>
@@ -876,13 +900,13 @@ export const HomeScreen = () => {
                         alt={activeMic === "ai" ? "mic off" : "mic"}
                         width={24}
                         height={24}
-                        className='w-5 h-5 md:w-6 md:h-6'
+                        className="w-5 h-5 md:w-6 md:h-6"
                       />
                     </Button>
                     <Button
                       onClick={() => handleSendMessage(rightUserInput, "ai")}
                       disabled={replyAs === "ai"} // Disable the button if "Reply as AI"
-                      className='h-10 md:h-12 px-4 md:px-6 py-2 md:py-[7px] bg-[#7630b5] rounded-xl font-medium text-sm md:text-base'
+                      className="h-10 md:h-12 px-4 md:px-6 py-2 md:py-[7px] bg-[#7630b5] rounded-xl font-medium text-sm md:text-base"
                     >
                       Send
                     </Button>
@@ -896,11 +920,11 @@ export const HomeScreen = () => {
                   } rounded-xl font-medium text-sm md:text-base mt-3 md:mt-0 w-full md:w-auto`}
                 >
                   <Image
-                    src='/mic-off.png'
-                    alt='mic off'
+                    src="/mic-off.png"
+                    alt="mic off"
                     width={24}
                     height={24}
-                    className='w-5 h-5 md:w-6 md:h-6'
+                    className="w-5 h-5 md:w-6 md:h-6"
                   />
                   {activeMic
                     ? `Stop ${activeMic === "user" ? "User" : "AI"} Mic`
@@ -914,36 +938,36 @@ export const HomeScreen = () => {
               open={showAnalysisModal}
               onOpenChange={setShowAnalysisModal}
             >
-              <DialogContent className='flex flex-col items-start gap-3 md:gap-5 p-4 md:p-6 bg-[#ffffff33] rounded-[20px] border border-[#7630b5] sm:max-w-[800px] max-h-[90vh] overflow-auto'>
+              <DialogContent className="flex flex-col items-start gap-3 md:gap-5 p-4 md:p-6 bg-[#ffffff33] rounded-[20px] border border-[#7630b5] sm:max-w-[800px] max-h-[90vh] overflow-auto">
                 <DialogHeader>
                   <DialogTitle className="flex items-center gap-3 md:gap-6 font-['Inter',Helvetica] font-semibold text-white text-lg md:text-xl">
                     <img
-                      className='relative w-8 h-8 md:w-10 md:h-10'
-                      alt='AI Analysis Icon'
-                      src='/frame.svg'
+                      className="relative w-8 h-8 md:w-10 md:h-10"
+                      alt="AI Analysis Icon"
+                      src="/frame.svg"
                     />
                     AI Analysis
                   </DialogTitle>
                 </DialogHeader>
-                <div className='flex flex-col items-start gap-3 md:gap-5 relative self-stretch w-full'>
+                <div className="flex flex-col items-start gap-3 md:gap-5 relative self-stretch w-full">
                   <Textarea
-                    className='h-[150px] md:h-[244px] p-3 md:p-5 bg-white rounded-xl border border-solid border-[#7630b5] font-medium text-[#707070] text-sm md:text-base w-full'
-                    placeholder='Paste chat history or any text here...'
+                    className="h-[150px] md:h-[244px] p-3 md:p-5 bg-white rounded-xl border border-solid border-[#7630b5] font-medium text-[#707070] text-sm md:text-base w-full"
+                    placeholder="Paste chat history or any text here..."
                     value={analyzeText}
                     onChange={(e) => setAnalyzeText(e.target.value)}
                   />
                 </div>
                 {analysisResult && (
-                  <div className='mt-4 p-4 bg-white rounded-xl w-full'>
-                    <h3 className='font-semibold text-lg text-[#7630b5]'>
+                  <div className="mt-4 p-4 bg-white rounded-xl w-full">
+                    <h3 className="font-semibold text-lg text-[#7630b5]">
                       Analysis Result:
                     </h3>
-                    <p className='text-[#101010]'>{analysisResult}</p>
+                    <p className="text-[#101010]">{analysisResult}</p>
                   </div>
                 )}
                 <Button
                   onClick={handleAnalyzeText}
-                  className='w-28 md:w-40 h-10 md:h-14 px-4 md:px-6 py-2 md:py-2.5 bg-[#7630b5] rounded-xl font-medium text-sm md:text-base'
+                  className="w-28 md:w-40 h-10 md:h-14 px-4 md:px-6 py-2 md:py-2.5 bg-[#7630b5] rounded-xl font-medium text-sm md:text-base"
                 >
                   Analyze
                 </Button>
@@ -957,35 +981,35 @@ export const HomeScreen = () => {
                 if (!open) setChatTitle("");
               }}
             >
-              <DialogContent className='flex flex-col items-start gap-4 p-6 bg-white rounded-xl border border-[#7630b5] sm:max-w-[500px]'>
-                <DialogHeader className='w-full'>
+              <DialogContent className="flex flex-col items-start gap-4 p-6 bg-white rounded-xl border border-[#7630b5] sm:max-w-[500px]">
+                <DialogHeader className="w-full">
                   <DialogTitle className="font-['Inter',Helvetica] font-semibold text-[#7630b5] text-xl text-center">
                     Save Conversation
                   </DialogTitle>
                 </DialogHeader>
-                <div className='flex flex-col items-start gap-3 w-full'>
-                  <label className='font-medium text-[#101010]'>
+                <div className="flex flex-col items-start gap-3 w-full">
+                  <label className="font-medium text-[#101010]">
                     Conversation Title
                   </label>
                   <Input
-                    className='h-12 p-4 bg-white rounded-xl border border-solid border-[#7630b5] font-medium text-[#101010] w-full'
-                    placeholder='Enter a title for this conversation'
+                    className="h-12 p-4 bg-white rounded-xl border border-solid border-[#7630b5] font-medium text-[#101010] w-full"
+                    placeholder="Enter a title for this conversation"
                     value={chatTitle}
                     onChange={(e) => setChatTitle(e.target.value)}
                     autoFocus
                   />
                 </div>
-                <div className='flex justify-end gap-4 w-full mt-4'>
+                <div className="flex justify-end gap-4 w-full mt-4">
                   <Button
-                    variant='outline'
+                    variant="outline"
                     onClick={() => setShowSaveChatDialog(false)}
-                    className='h-12 px-6 py-2.5 border border-solid border-[#7630b5] text-[#7630b5] rounded-xl font-medium'
+                    className="h-12 px-6 py-2.5 border border-solid border-[#7630b5] text-[#7630b5] rounded-xl font-medium"
                   >
                     Cancel
                   </Button>
                   <Button
                     onClick={submitSaveChat}
-                    className='h-12 px-6 py-2.5 bg-[#7630b5] rounded-xl font-medium'
+                    className="h-12 px-6 py-2.5 bg-[#7630b5] rounded-xl font-medium"
                     disabled={!chatTitle.trim()}
                   >
                     Save
