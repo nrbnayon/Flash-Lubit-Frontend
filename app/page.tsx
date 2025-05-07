@@ -17,8 +17,7 @@ export const metadata = {
     width: 1000,
     height: 600,
     type: "website",
-    images:
-      "https://i.postimg.cc/wB2VKYqx/logo-1.png",
+    images: "https://i.postimg.cc/d1mw0tv9/logo-1.png",
   },
 };
 export default function HomePage() {
