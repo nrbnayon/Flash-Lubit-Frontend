@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/contexts/AuthContext';
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface RequireAuthProps {
   children: React.ReactNode;
@@ -11,11 +11,11 @@ interface RequireAuthProps {
 
 /**
  * A component that protects routes requiring authentication
- * Redirects to login if user is not authenticated
+ * Redirects to login if user is not auth
  */
-export const RequireAuth = ({ 
-  children, 
-  redirectTo = '/login' 
+export const RequireAuth = ({
+  children,
+  redirectTo = "/login",
 }: RequireAuthProps) => {
   const { user, isLoading } = useAuth();
   const router = useRouter();
