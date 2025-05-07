@@ -460,11 +460,31 @@ export const HomeScreen = () => {
       setChatMessages(messages as Message[]);
 
       setTimeout(() => {
-        if (leftMessagesEndRef.current) {
-          leftMessagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-        }
-        if (rightMessagesEndRef.current) {
-          rightMessagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+        if (
+          leftMessagesEndRef.current &&
+          rightMessagesEndRef.current &&
+          headerRef.current
+        ) {
+          const headerHeight = headerRef.current.getBoundingClientRect().height;
+          [leftMessagesRef.current, rightMessagesRef.current].forEach(
+            (container) => {
+              if (container) {
+                const endRect =
+                  leftMessagesEndRef.current!.getBoundingClientRect();
+                const containerRect = container.getBoundingClientRect();
+                const scrollOffset =
+                  endRect.top -
+                  containerRect.top +
+                  container.scrollTop -
+                  headerHeight -
+                  10; // 10px buffer
+                container.scrollTo({
+                  top: scrollOffset,
+                  behavior: "smooth",
+                });
+              }
+            }
+          );
         }
       }, 100);
 
@@ -548,13 +568,13 @@ export const HomeScreen = () => {
   };
 
   return (
-    <div className="bg-white flex flex-row justify-center w-full">
-      <div className="bg-white w-full max-w-[1920px]">
+    <div className="flex flex-row justify-center w-full">
+      <div className="w-full max-w-[1920px]">
         <div className="relative min-h-screen bg-[url(/background1.webp)] bg-cover bg-[50%_0%] px-4 md:px-6 lg:px-10">
           {/* Header */}
           <div
             ref={headerRef}
-            className="flex justify-between items-center p-4 sticky top-0 bg-white z-10"
+            className="flex justify-between items-center p-4 sticky top-0 z-10"
           >
             <Image
               src="/logo-1.png"
