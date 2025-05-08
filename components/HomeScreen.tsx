@@ -76,6 +76,8 @@ export const HomeScreen = () => {
   const [currentPlayingIndex, setCurrentPlayingIndex] = useState<number | null>(
     null
   );
+  const [isHeaderVisible, setIsHeaderVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const [personality, setPersonality] = useState<string>("friendly");
   const [replyAs, setReplyAs] = useState<string>("ai");
   const [leftUserInput, setLeftUserInput] = useState<string>("");
@@ -148,6 +150,25 @@ export const HomeScreen = () => {
     fetchSavedChats();
   }, []);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      if (currentScrollY < lastScrollY || currentScrollY < 50) {
+        // Scrolling up or at the top, show header
+        setIsHeaderVisible(true);
+      } else if (currentScrollY > 50 && currentScrollY > lastScrollY) {
+        // Scrolling down and not at the top, hide header
+        setIsHeaderVisible(false);
+      }
+
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
+
   const handleSendMessage = async (text: string, sender: "user" | "ai") => {
     if (!text.trim()) return;
     if (!selectedLeftAvatar || !selectedRightAvatar) {
@@ -215,7 +236,9 @@ export const HomeScreen = () => {
         currentVideoRef.current.currentTime = 0;
         currentVideoRef.current = null;
       }
-      toast.success("Replay stopped.");
+      toast.success("Replay stopped.", {
+        style: { background: "#4caf50", color: "white", border: "none" },
+      });
       return;
     }
 
@@ -434,7 +457,7 @@ export const HomeScreen = () => {
       await saveChatApi({ title: chatTitle, conversation_id: conversationId });
       toast.success("Chat saved successfully!", {
         description: `Chat "${chatTitle}" has been saved.`,
-        style: { background: "#7630b5", color: "white", border: "none" },
+        style: { background: "#4caf50", color: "white", border: "none" },
       });
       const chats = await getSavedChatsApi();
       setSavedChats(chats);
@@ -490,7 +513,7 @@ export const HomeScreen = () => {
 
       toast.success("Chat loaded successfully!", {
         description: `Loaded chat: ${chatDetails?.title}`,
-        style: { background: "#7630b5", color: "white", border: "none" },
+        style: { background: "#4caf50", color: "white", border: "none" },
       });
     } catch (error) {
       toast.error("Failed to load chat. Please try again.");
@@ -563,7 +586,70 @@ export const HomeScreen = () => {
       recognitionRef.current.stop();
       recognitionRef.current = null;
       setActiveMic(null);
-      toast.success("Microphone stopped.");
+      toast.success("Microphone stopped.", {
+        style: { background: "#4caf50", color: "white", border: "none" },
+      });
+    }
+  };
+
+  const handleCopyChat = () => {
+    if (chatMessages.length === 0) {
+      toast.error("No messages to copy.");
+      return;
+    }
+
+    const chatText = chatMessages
+      .map((msg) => {
+        const sender =
+          msg.sender === "user"
+            ? selectedLeftAvatar?.avatar_name || "User"
+            : selectedRightAvatar?.avatar_name || "AI";
+        return `${sender}: ${msg.text}`;
+      })
+      .join("\n\n");
+
+    // Fallback copy method using a temporary textarea element
+    try {
+      // Try modern clipboard API first
+      if (
+        navigator.clipboard &&
+        typeof navigator.clipboard.writeText === "function"
+      ) {
+        navigator.clipboard
+          .writeText(chatText)
+          .then(() => {
+            toast.success("Chat copied to clipboard!", {
+              description: "All messages have been copied.",
+              style: { background: "#4caf50", color: "white", border: "none" },
+            });
+          })
+          .catch((err) => {
+            throw err; // Will be caught by outer try/catch
+          });
+      } else {
+        // Fallback for browsers without clipboard API
+        const textarea = document.createElement("textarea");
+        textarea.value = chatText;
+        textarea.style.position = "fixed"; // Prevent scrolling to bottom
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+
+        const successful = document.execCommand("copy");
+        document.body.removeChild(textarea);
+
+        if (successful) {
+          toast.success("Chat copied to clipboard!", {
+            description: "All messages have been copied.",
+            style: { background: "#4caf50", color: "white", border: "none" },
+          });
+        } else {
+          throw new Error("Copy command was unsuccessful");
+        }
+      }
+    } catch (err) {
+      console.error("Failed to copy chat: ", err);
+      toast.error("Failed to copy chat. Please try again.");
     }
   };
 
@@ -574,7 +660,9 @@ export const HomeScreen = () => {
           {/* Header */}
           <div
             ref={headerRef}
-            className="flex justify-between items-center p-4 sticky top-0 z-10"
+            className={`flex justify-between items-center p-4 sticky top-0 z-10 transition-transform duration-300 ${
+              isHeaderVisible ? "translate-y-0" : "-translate-y-full"
+            }`}
           >
             <Image
               src="/logo-1.png"
@@ -750,12 +838,20 @@ export const HomeScreen = () => {
               >
                 Upload New Avatar
               </Link>
-              <Button
-                onClick={handleReplayDialogue}
-                className="bg-[#7630b5] rounded-xl text-white font-medium text-sm md:text-base h-12 md:h-14 px-6 flex justify-center items-center"
-              >
-                {isPlaying ? "⏸️ Pause Dialogue" : "⏯️ Replay Dialogue"}
-              </Button>
+              <div className="flex justify-center items-center max-w-[424px] items-center gap-2">
+                <Button
+                  onClick={handleReplayDialogue}
+                  className="bg-[#7630b5] rounded-xl text-white font-medium text-sm md:text-base h-12 md:h-14 px-6 flex justify-center items-center"
+                >
+                  {isPlaying ? "⏸️ Pause Dialogue" : "⏯️ Replay Dialogue"}
+                </Button>
+                <Button
+                  onClick={handleCopyChat}
+                  className="bg-[#7630b5] rounded-xl text-white font-medium text-sm md:text-base h-12 md:h-14 px-6 flex justify-center items-center"
+                >
+                  📋 Copy Chat
+                </Button>
+              </div>
               <Select onValueChange={handleLoadChat}>
                 <SelectTrigger className="bg-[#7630b5] rounded-xl border-none text-white font-medium text-sm md:text-base h-12 md:h-14 px-6 flex items-center justify-between gap-2">
                   <SelectValue placeholder="📂 Select Conversation" />
@@ -785,7 +881,7 @@ export const HomeScreen = () => {
                     toast.success("New conversation started!", {
                       description: "You can now start a new conversation.",
                       style: {
-                        background: "#7630b5",
+                        background: "#4caf50",
                         color: "white",
                         border: "none",
                       },
