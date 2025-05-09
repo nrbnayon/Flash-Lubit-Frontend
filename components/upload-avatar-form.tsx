@@ -156,19 +156,19 @@ export function UploadAvatarForm() {
 
   return (
     <RequireAuth>
-      <div className='min-h-screen bg-gradient-to-br from-blue-200 via-purple-100 to-pink-200 relative overflow-hidden flex items-center justify-center'>
+      <div className="min-h-screen bg-gradient-to-br from-blue-200 via-purple-100 to-pink-200 relative overflow-hidden flex items-center justify-center">
         <BackgroundDecoration />
 
         {/* Header */}
-        <div className='absolute top-0 left-0 w-full flex justify-between items-center p-4'>
+        <div className="absolute top-0 left-0 w-full flex justify-between items-center p-4">
           {/* Logo */}
-          <div className='relative z-10'>
+          <div className="relative z-10">
             <Image
-              src='/logo-1.png'
-              alt='Logo'
+              src="/logo-1.png"
+              alt="Logo"
               width={99}
               height={80}
-              className='w-[60px] md:w-[80px] lg:w-[99px] h-10 md:h-16 lg:h-20 object-contain'
+              className="w-[60px] md:w-[80px] lg:w-[99px] h-10 md:h-16 lg:h-20 object-contain"
               priority
             />
           </div>
@@ -180,99 +180,99 @@ export function UploadAvatarForm() {
           <div></div>
         </div>
 
-        <div className='w-full max-w-md mx-auto bg-[#FFFFFF66] backdrop-blur-sm rounded-xl p-10 px-6'>
-          <h1 className='text-2xl font-bold text-center text-[#141b34] mb-6'>
+        <div className="w-full max-w-md mx-auto bg-[#FFFFFF66] backdrop-blur-sm rounded-xl p-10 px-6">
+          <h1 className="text-2xl font-bold text-center text-[#141b34] mb-6">
             Upload New Avatar
           </h1>
 
-          <form onSubmit={handleSubmit} className='space-y-4'>
-            <div className='space-y-2'>
-              <Label htmlFor='side'>Select Avatar Type</Label>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="side">Select Avatar Type</Label>
               <Select value={formData.side} onValueChange={handleSelectChange}>
-                <SelectTrigger id='side' className='w-full'>
-                  <SelectValue placeholder='Select Avatar Type' />
+                <SelectTrigger id="side" className="w-full">
+                  <SelectValue placeholder="Select Avatar Type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value='AI'>AI</SelectItem>
-                  <SelectItem value='USER'>USER</SelectItem>
+                  <SelectItem value="AI">AI</SelectItem>
+                  <SelectItem value="USER">USER</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
-            <div className='space-y-2'>
-              <Label htmlFor='avatar_name'>Avatar name</Label>
+            <div className="space-y-2">
+              <Label htmlFor="avatar_name">Avatar name</Label>
               <Input
-                id='avatar_name'
-                name='avatar_name'
+                id="avatar_name"
+                name="avatar_name"
                 value={formData.avatar_name}
                 onChange={handleInputChange}
-                placeholder='Enter avatar name'
+                placeholder="Enter avatar name"
               />
             </div>
 
-            <div className='space-y-2'>
-              <Label htmlFor='voice_name'>Voice name</Label>
+            <div className="space-y-2">
+              <Label htmlFor="voice_name">Voice name</Label>
               <Input
-                id='voice_name'
-                name='voice_name'
+                id="voice_name"
+                name="voice_name"
                 value={formData.voice_name}
                 onChange={handleInputChange}
-                placeholder='Enter voice name'
+                placeholder="Enter voice name"
               />
             </div>
 
-            <div className='space-y-2'>
-              <Label htmlFor='elevenlabs_voice_id'>Element labs voice ID</Label>
+            <div className="space-y-2">
+              <Label htmlFor="elevenlabs_voice_id">Element labs voice ID</Label>
               <Input
-                id='elevenlabs_voice_id'
-                name='elevenlabs_voice_id'
+                id="elevenlabs_voice_id"
+                name="elevenlabs_voice_id"
                 value={formData.elevenlabs_voice_id}
                 onChange={handleInputChange}
-                placeholder='Enter voice ID'
+                placeholder="Enter voice ID"
               />
             </div>
 
-            <div className='space-y-2'>
-              <Label htmlFor='video'>Choose Video File</Label>
-              <div className='flex items-center'>
+            <div className="space-y-2">
+              <Label htmlFor="video">Choose Video File</Label>
+              <div className="flex items-center">
                 <Input
                   ref={fileInputRef}
-                  id='video'
-                  type='file'
-                  accept='video/*'
+                  id="video"
+                  type="file"
+                  accept="video/*"
                   onChange={handleFileChange}
-                  className='hidden'
+                  className="hidden"
                 />
-                <div className='flex-1 border rounded-l-md bg-white p-2 text-sm truncate'>
+                <div className="flex-1 border rounded-l-md bg-white p-2 text-sm truncate">
                   {fileName}
                 </div>
                 <Button
-                  type='button'
-                  variant='secondary'
-                  className='rounded-l-none'
+                  type="button"
+                  variant="secondary"
+                  className="rounded-l-none"
                   onClick={() => fileInputRef.current?.click()}
                 >
-                  <Upload className='h-4 w-4 mr-2' />
+                  <Upload className="h-4 w-4 mr-2" />
                   Browse
                 </Button>
               </div>
             </div>
 
             <Button
-              type='submit'
-              className='w-full bg-[#7630b5] hover:bg-[#7630b5]/90 text-white mt-6'
+              type="submit"
+              className="w-full bg-purple hover:bg-purple/90 text-white mt-6"
               disabled={isSubmitting}
             >
               {isSubmitting ? "Uploading..." : "Submit"}
             </Button>
 
             <Button
-              type='button'
-              variant='ghost'
-              className='w-full text-[#7630b5] flex items-center justify-center'
+              type="button"
+              variant="ghost"
+              className="w-full text-[#7630b5] flex items-center justify-center"
               onClick={() => router.push("/")}
             >
-              <ArrowLeft className='h-4 w-4 mr-2' />
+              <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Chat
             </Button>
           </form>

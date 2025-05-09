@@ -21,6 +21,7 @@ const config = {
     },
     extend: {
       colors: {
+        primaryColor: "#7630b5",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -42,6 +43,7 @@ const config = {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",
         },
+
         accent: {
           DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
@@ -94,19 +96,19 @@ const config = {
             height: "0px",
           },
           "&::-webkit-scrollbar-track": {
-            backgroundColor: "transparent", // Set track background to transparent
+            backgroundColor: "transparent",
             borderRadius: "100vh",
           },
           "&::-webkit-scrollbar-thumb": {
-            backgroundColor: "transparent", // Set thumb background to transparent
+            backgroundColor: "transparent",
             borderRadius: "100vh",
           },
           "&::-webkit-scrollbar-thumb:hover": {
-            backgroundColor: "transparent", // Set hover background to transparent
+            backgroundColor: "transparent",
             opacity: "0.0",
           },
           scrollbarWidth: "thin",
-          scrollbarColor: "transparent transparent", // Set scrollbar colors to transparent
+          scrollbarColor: "transparent transparent",
         },
       };
       addUtilities(newUtilities);

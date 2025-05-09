@@ -56,7 +56,9 @@ export function Login() {
       }
     } catch (error) {
       const errorMessage =
-        (error as any)?.response?.data?.message || (error as any)?.message || "Invalid credentials";
+        (error as any)?.response?.data?.message ||
+        (error as any)?.message ||
+        "Invalid credentials";
 
       toast.error("Login failed", {
         description: errorMessage,
@@ -105,7 +107,7 @@ export function Login() {
         />
         <Button
           onClick={handleLogin}
-          className="w-full bg-[#7630b5] hover:bg-[#7630b5]/90"
+          className="w-full bg-purple hover:bg-purple/90"
           disabled={isLoading}
         >
           {isLoading ? "Logging in..." : "Login"}
