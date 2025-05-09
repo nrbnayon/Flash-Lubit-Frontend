@@ -548,53 +548,59 @@ export const HomeScreen = () => {
 
     stopMic();
 
-    const recognition = new SpeechRecognition();
-    recognition.lang = "en-US";
-    recognition.interimResults = true; // Enable real-time updates
-    recognition.continuous = true; // Keep listening until stopped
+    let recognition: typeof SpeechRecognition | null;
+    let fullTranscript = "";
+    let lastSpeechTime = Date.now();
 
-    let fullTranscript = ""; // Accumulate transcript across results
+    const startRecognition = () => {
+      recognition = new SpeechRecognition();
+      recognition.lang = "en-US";
+      recognition.interimResults = true; // Show partial results as you speak
+      recognition.continuous = true; // Try to keep it running continuously
 
-    recognition.onstart = () => {
-      setActiveMic(sender);
-      toast.success("Microphone is active. Start speaking..."); // Positive feedback
-    };
+      recognition.onstart = () => {
+        setActiveMic(sender);
+        toast.success("Microphone is active. Start speaking...");
+      };
 
-    recognition.onresult = async (event: any) => {
-      let transcript = "";
-      for (let i = event.resultIndex; i < event.results.length; ++i) {
-        transcript += event.results[i][0].transcript;
-      }
-      fullTranscript = transcript;
+      recognition.onresult = (event: any) => {
+        let transcript = "";
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          transcript += event.results[i][0].transcript;
+          if (event.results[i].isFinal) {
+            fullTranscript = transcript;
+            if (sender === "user") setLeftUserInput(fullTranscript);
+            else setRightUserInput(fullTranscript);
+            handleSendMessage(fullTranscript, sender);
+            fullTranscript = "";
+          }
+        }
+        lastSpeechTime = Date.now(); // Update time whenever speech is detected
+      };
 
-      // Process only when a final result is received
-      if (event.results[event.results.length - 1].isFinal) {
-        if (sender === "user") setLeftUserInput(fullTranscript);
-        else setRightUserInput(fullTranscript);
-        await handleSendMessage(fullTranscript, sender);
-        fullTranscript = ""; // Reset after sending
-      }
-    };
-
-    recognition.onerror = (event: any) => {
-      setActiveMic(null);
-      toast.error(`Speech recognition error: ${event.error}`);
-      recognition.stop();
-    };
-
-    recognition.onend = () => {
-      // Restart if no transcript and mic is still intended to be active
-      if (activeMic === sender && fullTranscript.trim() === "") {
-        recognition.start();
-      } else {
+      recognition.onerror = (event: any) => {
         setActiveMic(null);
-        recognitionRef.current = null;
-        toast.success("Microphone stopped."); // Confirm stop only when done
-      }
+        toast.error(`Speech recognition error: ${event.error}`);
+        recognition.stop();
+      };
+
+      recognition.onend = () => {
+        const timeSinceLastSpeech = Date.now() - lastSpeechTime;
+        // If the mic is still supposed to be active and we recently heard speech, restart
+        if (activeMic === sender && timeSinceLastSpeech < 30000) {
+          startRecognition(); // Restart recognition
+        } else {
+          setActiveMic(null);
+          toast.success("Microphone stopped.");
+        }
+      };
+
+      recognition.start();
+      recognitionRef.current = recognition;
     };
 
-    recognitionRef.current = recognition;
-    recognition.start();
+    // Start the recognition for the first time
+    startRecognition();
   };
 
   const stopMic = () => {
