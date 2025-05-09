@@ -550,19 +550,30 @@ export const HomeScreen = () => {
 
     const recognition = new SpeechRecognition();
     recognition.lang = "en-US";
-    recognition.interimResults = false;
-    recognition.continuous = false;
+    recognition.interimResults = true; // Enable real-time updates
+    recognition.continuous = true; // Keep listening until stopped
+
+    let fullTranscript = ""; // Accumulate transcript across results
 
     recognition.onstart = () => {
       setActiveMic(sender);
-      toast.error("Microphone is active. Start speaking...");
+      toast.success("Microphone is active. Start speaking..."); // Positive feedback
     };
 
     recognition.onresult = async (event: any) => {
-      const text = event.results[0][0].transcript;
-      if (sender === "user") setLeftUserInput(text);
-      else setRightUserInput(text);
-      await handleSendMessage(text, sender);
+      let transcript = "";
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
+        transcript += event.results[i][0].transcript;
+      }
+      fullTranscript = transcript;
+
+      // Process only when a final result is received
+      if (event.results[event.results.length - 1].isFinal) {
+        if (sender === "user") setLeftUserInput(fullTranscript);
+        else setRightUserInput(fullTranscript);
+        await handleSendMessage(fullTranscript, sender);
+        fullTranscript = ""; // Reset after sending
+      }
     };
 
     recognition.onerror = (event: any) => {
@@ -572,9 +583,14 @@ export const HomeScreen = () => {
     };
 
     recognition.onend = () => {
-      setActiveMic(null);
-      recognitionRef.current = null;
-      toast.error("Microphone stopped.");
+      // Restart if no transcript and mic is still intended to be active
+      if (activeMic === sender && fullTranscript.trim() === "") {
+        recognition.start();
+      } else {
+        setActiveMic(null);
+        recognitionRef.current = null;
+        toast.success("Microphone stopped."); // Confirm stop only when done
+      }
     };
 
     recognitionRef.current = recognition;
@@ -838,7 +854,7 @@ export const HomeScreen = () => {
               >
                 Upload New Avatar
               </Link>
-              <div className="flex justify-center items-center max-w-[424px] items-center gap-2">
+              <div className="flex justify-center max-w-[424px] items-center gap-2">
                 <Button
                   onClick={handleReplayDialogue}
                   className="bg-[#7630b5] rounded-xl text-white font-medium text-sm md:text-base h-12 md:h-14 px-6 flex justify-center items-center"
