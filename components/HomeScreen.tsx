@@ -555,8 +555,8 @@ export const HomeScreen = () => {
     const startRecognition = () => {
       recognition = new SpeechRecognition();
       recognition.lang = "en-US";
-      recognition.interimResults = true; // Show partial results as you speak
-      recognition.continuous = true; // Try to keep it running continuously
+      recognition.interimResults = true;
+      recognition.continuous = true;
 
       recognition.onstart = () => {
         setActiveMic(sender);
@@ -575,7 +575,7 @@ export const HomeScreen = () => {
             fullTranscript = "";
           }
         }
-        lastSpeechTime = Date.now(); // Update time whenever speech is detected
+        lastSpeechTime = Date.now();
       };
 
       recognition.onerror = (event: any) => {
