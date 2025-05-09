@@ -85,7 +85,9 @@ export const HomeScreen = () => {
   const [analysisResult, setAnalysisResult] = useState<string>("");
   const leftVideoRef = useRef<HTMLVideoElement>(null);
   const rightVideoRef = useRef<HTMLVideoElement>(null);
-  const recognitionRef = useRef<any | null>(null);
+  const recognitionRef = useRef<{ recognition: any; stop: () => void } | null>(
+    null
+  );
   const currentAudioRef = useRef<HTMLAudioElement | null>(null);
   const currentVideoRef = useRef<HTMLVideoElement | null>(null);
   const [activeMic, setActiveMic] = useState<"user" | "ai" | null>(null);
@@ -533,6 +535,8 @@ export const HomeScreen = () => {
     }
   };
 
+  // startMic  improved versions
+
   const startMic = (sender: "user" | "ai") => {
     if (activeMic === sender) {
       stopMic();
@@ -548,59 +552,91 @@ export const HomeScreen = () => {
 
     stopMic();
 
-    let recognition: typeof SpeechRecognition | null;
+    // Create and configure the recognition object
+    const recognition = new SpeechRecognition();
+    recognition.lang = "en-US";
+    recognition.interimResults = true;
+    recognition.continuous = true;
+
     let fullTranscript = "";
-    let lastSpeechTime = Date.now();
+    let isRecognitionActive = true;
 
-    const startRecognition = () => {
-      recognition = new SpeechRecognition();
-      recognition.lang = "en-US";
-      recognition.interimResults = true;
-      recognition.continuous = true;
-
-      recognition.onstart = () => {
-        setActiveMic(sender);
-        toast.success("Microphone is active. Start speaking...");
-      };
-
-      recognition.onresult = (event: any) => {
-        let transcript = "";
-        for (let i = event.resultIndex; i < event.results.length; ++i) {
-          transcript += event.results[i][0].transcript;
-          if (event.results[i].isFinal) {
-            fullTranscript = transcript;
-            if (sender === "user") setLeftUserInput(fullTranscript);
-            else setRightUserInput(fullTranscript);
-            handleSendMessage(fullTranscript, sender);
-            fullTranscript = "";
-          }
+    // Auto-restart mechanism
+    const restartRecognition = () => {
+      if (isRecognitionActive) {
+        try {
+          recognition.start();
+        } catch (error) {
+          console.error("Error restarting speech recognition:", error);
+          setTimeout(restartRecognition, 1000); // Try again after a short delay
         }
-        lastSpeechTime = Date.now();
-      };
-
-      recognition.onerror = (event: any) => {
-        setActiveMic(null);
-        toast.error(`Speech recognition error: ${event.error}`);
-        recognition.stop();
-      };
-
-      recognition.onend = () => {
-        const timeSinceLastSpeech = Date.now() - lastSpeechTime;
-        // If the mic is still supposed to be active and we recently heard speech, restart
-        if (activeMic === sender && timeSinceLastSpeech < 30000) {
-          startRecognition(); // Restart recognition
-        } else {
-          setActiveMic(null);
-          toast.success("Microphone stopped.");
-        }
-      };
-
-      recognition.start();
-      recognitionRef.current = recognition;
+      }
     };
 
-    // Start the recognition for the first time
-    startRecognition();
+    recognition.onstart = () => {
+      setActiveMic(sender);
+      toast.success("Microphone is active. Start speaking...");
+    };
+
+    recognition.onresult = (event: any) => {
+      let transcript = "";
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
+        transcript += event.results[i][0].transcript;
+        if (event.results[i].isFinal) {
+          fullTranscript = transcript;
+          if (sender === "user") setLeftUserInput(fullTranscript);
+          else setRightUserInput(fullTranscript);
+          handleSendMessage(fullTranscript, sender);
+          fullTranscript = "";
+        }
+      }
+    };
+
+    recognition.onerror = (event: any) => {
+      console.warn(`Speech recognition error: ${event.error}`);
+
+      // Don't stop for most errors, especially "no-speech" errors
+      if (event.error === "aborted" || event.error === "not-allowed") {
+        isRecognitionActive = false;
+        setActiveMic(null);
+        toast.error(`Speech recognition error: ${event.error}`);
+      }
+    };
+
+    recognition.onend = () => {
+      console.log("Speech recognition service disconnected");
+      // Immediately restart if still active
+      if (isRecognitionActive) {
+        console.log("Restarting speech recognition...");
+        setTimeout(restartRecognition, 300);
+      } else {
+        setActiveMic(null);
+        toast.success("Microphone stopped.");
+      }
+    };
+
+    // Store the reference and status
+    recognitionRef.current = {
+      recognition,
+      stop: () => {
+        isRecognitionActive = false;
+        try {
+          recognition.stop();
+        } catch (e) {
+          console.error("Error stopping recognition:", e);
+        }
+      },
+    };
+
+    // Start the recognition
+    try {
+      recognition.start();
+    } catch (error) {
+      console.error("Error starting speech recognition:", error);
+      toast.error("Failed to start speech recognition. Please try again.");
+      isRecognitionActive = false;
+      setActiveMic(null);
+    }
   };
 
   const stopMic = () => {
