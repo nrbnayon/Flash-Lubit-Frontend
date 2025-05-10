@@ -754,7 +754,7 @@ export const HomeScreen = () => {
   useEffect(() => {
     const fetchMoodOptions = async () => {
       try {
-        const response = await api.get("/api/moods");
+        const response = await api.get("/moods");
         console.log("Get Mood::", response.data);
         setMoodOptionsData(response.data);
       } catch (error) {
