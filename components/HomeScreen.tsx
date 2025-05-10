@@ -34,8 +34,6 @@ import {
 } from "@/lib/services/api";
 import { v4 as uuidv4 } from "uuid";
 import api from "@/lib/axios";
-import { console } from "node:inspector/promises";
-
 declare global {
   interface Window {
     SpeechRecognition: any;
