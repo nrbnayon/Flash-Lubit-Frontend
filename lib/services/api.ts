@@ -9,6 +9,7 @@ export interface SpeakPayload {
   user_voice_name: string;
   ai_voice_name: string;
   reply_as: string;
+  mode?: string;
   reply_text?: string;
 }
 

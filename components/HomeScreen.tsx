@@ -198,8 +198,11 @@ export const HomeScreen = () => {
       user_voice_name: selectedLeftAvatar.voice_name,
       ai_voice_name: selectedRightAvatar.voice_name,
       reply_as: effectiveReplyAs.toUpperCase(),
+      mode: personality.toLowerCase(),
       reply_text: text,
     };
+
+    console.log("Send message payload:::", payload)
 
     try {
       const response = await speakApi(payload);
@@ -1051,15 +1054,24 @@ export const HomeScreen = () => {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        {moodOptionsData.map((option: any) => (
-                          <SelectItem key={option.id} value={option.mood_name}>
-                            {option?.mood_name.charAt(0).toUpperCase() +
-                              option?.mood_name.slice(1) || "N/A"}
-                          </SelectItem>
-                        ))}
-                        {/* <SelectItem value="friendly">Friendly</SelectItem>
-                        <SelectItem value="formal">Formal</SelectItem>
-                        <SelectItem value="casual">Casual</SelectItem> */}
+                        {moodOptionsData && moodOptionsData.length > 0 ? (
+                          moodOptionsData.map((option: any) => (
+                            <SelectItem
+                              key={option.id}
+                              value={option.mood_name}
+                            >
+                              {option.mood_name.charAt(0).toUpperCase() +
+                                option.mood_name.slice(1) || "N/A"}
+                            </SelectItem>
+                          ))
+                        ) : (
+                          // Fallback options in case API fails
+                          <>
+                            <SelectItem value="friendly">Friendly</SelectItem>
+                            <SelectItem value="formal">Formal</SelectItem>
+                            <SelectItem value="casual">Casual</SelectItem>
+                          </>
+                        )}
                       </SelectContent>
                     </Select>
                     <Select value={replyAs} onValueChange={setReplyAs}>
