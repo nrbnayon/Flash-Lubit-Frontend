@@ -202,7 +202,7 @@ export const HomeScreen = () => {
       reply_text: text,
     };
 
-    console.log("Send message payload:::", payload)
+    // console.log("Send message payload:::", payload)
 
     try {
       const response = await speakApi(payload);
