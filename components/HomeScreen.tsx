@@ -33,6 +33,8 @@ import {
   SpeakPayload,
 } from "@/lib/services/api";
 import { v4 as uuidv4 } from "uuid";
+import api from "@/lib/axios";
+import { console } from "node:inspector/promises";
 
 declare global {
   interface Window {
@@ -92,6 +94,7 @@ export const HomeScreen = () => {
   const currentVideoRef = useRef<HTMLVideoElement | null>(null);
   const [activeMic, setActiveMic] = useState<"user" | "ai" | null>(null);
   const [showSaveChatDialog, setShowSaveChatDialog] = useState<boolean>(false);
+  const [moodOptionsData, setMoodOptionsData] = useState<SavedChat[]>([]);
   const [chatTitle, setChatTitle] = useState<string>("");
   const leftMessagesEndRef = useRef<HTMLDivElement | null>(null);
   const rightMessagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -750,6 +753,27 @@ export const HomeScreen = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchMoodOptions = async () => {
+      try {
+        const response = await api.get("/api/moods");
+        console.log("Get Mood::", response.data);
+        setMoodOptionsData(response.data);
+      } catch (error) {
+        console.error("Error fetching moods:", error);
+        toast.error("Failed to fetch saved chats", {
+          style: {
+            background: "#ff5757",
+            color: "white",
+            border: "none",
+          },
+        });
+      }
+    };
+
+    fetchMoodOptions();
+  }, []);
+
   return (
     <div className="flex flex-row justify-center w-full">
       <div className="w-full max-w-[1920px]">
@@ -1029,9 +1053,14 @@ export const HomeScreen = () => {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="friendly">Friendly</SelectItem>
+                        {moodOptionsData.map((option: any) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                        {/* <SelectItem value="friendly">Friendly</SelectItem>
                         <SelectItem value="formal">Formal</SelectItem>
-                        <SelectItem value="casual">Casual</SelectItem>
+                        <SelectItem value="casual">Casual</SelectItem> */}
                       </SelectContent>
                     </Select>
                     <Select value={replyAs} onValueChange={setReplyAs}>

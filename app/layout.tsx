@@ -58,7 +58,7 @@ export const metadata: Metadata = {
     apple: "/apple-icon.png",
   },
   verification: {
-    google: "verification_token", // Replace with your actual Google verification token
+    google: "verification_token", 
   },
 };
 
