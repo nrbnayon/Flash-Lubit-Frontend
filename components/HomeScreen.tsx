@@ -755,7 +755,7 @@ export const HomeScreen = () => {
     const fetchMoodOptions = async () => {
       try {
         const response = await api.get("/moods");
-        console.log("Get Mood::", response.data);
+        // console.log("Get Mood::", response.data);
         setMoodOptionsData(response.data);
       } catch (error) {
         console.error("Error fetching moods:", error);
