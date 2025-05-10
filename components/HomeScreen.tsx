@@ -1052,8 +1052,9 @@ export const HomeScreen = () => {
                       </SelectTrigger>
                       <SelectContent>
                         {moodOptionsData.map((option: any) => (
-                          <SelectItem key={option.value} value={option.value}>
-                            {option.label}
+                          <SelectItem key={option.id} value={option.mood_name}>
+                            {option?.mood_name.charAt(0).toUpperCase() +
+                              option?.mood_name.slice(1) || "N/A"}
                           </SelectItem>
                         ))}
                         {/* <SelectItem value="friendly">Friendly</SelectItem>
