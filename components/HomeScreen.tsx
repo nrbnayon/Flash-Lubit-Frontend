@@ -79,6 +79,8 @@ export const HomeScreen = () => {
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [personality, setPersonality] = useState<string>("friendly");
+  const [userVoice, setUserVoice] = useState<string>("");
+  const [aiVoice, setAiVoice] = useState<string>("");
   const [replyAs, setReplyAs] = useState<string>("ai");
   const [leftUserInput, setLeftUserInput] = useState<string>("");
   const [rightUserInput, setRightUserInput] = useState<string>("");
@@ -195,8 +197,8 @@ export const HomeScreen = () => {
       conversation_id: conversationId,
       text,
       sender_type: sender.toUpperCase(),
-      user_voice_name: selectedLeftAvatar.voice_name,
-      ai_voice_name: selectedRightAvatar.voice_name,
+      user_voice_name: userVoice || selectedLeftAvatar.voice_name,
+      ai_voice_name: aiVoice || selectedRightAvatar.voice_name,
       reply_as: effectiveReplyAs.toUpperCase(),
       mode: personality.toLowerCase(),
       reply_text: text,
@@ -776,9 +778,9 @@ export const HomeScreen = () => {
   }, []);
 
   return (
-    <div className="flex flex-row justify-center w-full">
-      <div className="w-full max-w-[1920px]">
-        <div className="relative min-h-screen bg-[url(/background1.webp)] bg-cover bg-[50%_0%] px-4 md:px-6 lg:px-10">
+    <div className='flex flex-row justify-center w-full'>
+      <div className='w-full max-w-[1920px]'>
+        <div className='relative min-h-screen bg-[url(/background1.webp)] bg-cover bg-[50%_0%] px-4 md:px-6 lg:px-10'>
           {/* Header */}
           <div
             ref={headerRef}
@@ -787,35 +789,35 @@ export const HomeScreen = () => {
             }`}
           >
             <Image
-              src="/logo-1.png"
-              alt="Logo"
+              src='/logo-1.png'
+              alt='Logo'
               width={60}
               height={60}
-              className="w-[60px] md:w-[60px] lg:w-[60px] h-8 lg:h-12 object-cover"
+              className='w-[60px] md:w-[60px] lg:w-[60px] h-8 lg:h-12 object-cover'
             />
             <h1 className="font-['Inter',Helvetica] font-semibold text-[#101010] text-2xl md:text-2xl lg:text-3xl text-center tracking-[0] leading-[normal]">
               Internal Dialogue
             </h1>
             <Button
-              className="w-[140px] md:w-[200px] h-10 md:h-12 gap-2.5 px-4 md:px-4 py-2 md:py-2.5 bg-purple rounded-xl font-medium text-sm md:text-base"
+              className='w-[140px] md:w-[200px] h-10 md:h-12 gap-2.5 px-4 md:px-4 py-2 md:py-2.5 bg-purple rounded-xl font-medium text-sm md:text-base'
               onClick={() => setShowAnalysisModal(!showAnalysisModal)}
             >
               {showAnalysisModal ? "Hide AI Analysis" : "Show AI Analysis"}
             </Button>
           </div>
 
-          <div className="pt-2 pb-6 px-2 md:px-6 lg:px-12 max-w-full mx-auto custom-scrollbar">
-            <div className="flex flex-col lg:flex-row justify-between gap-6 md:gap-8 lg:gap-12">
-              <div className="flex flex-col md:flex-row lg:flex-row items-center md:items-start lg:items-start gap-4 md:gap-6 lg:gap-8 w-full lg:w-1/2">
-                <div className="flex flex-col w-full md:w-[300px] lg:w-[400px] items-center gap-4">
+          <div className='pt-2 pb-6 px-2 md:px-6 lg:px-12 max-w-full mx-auto custom-scrollbar'>
+            <div className='flex flex-col lg:flex-row justify-between gap-6 md:gap-8 lg:gap-12'>
+              <div className='flex flex-col md:flex-row lg:flex-row items-center md:items-start lg:items-start gap-4 md:gap-6 lg:gap-8 w-full lg:w-1/2'>
+                <div className='flex flex-col w-full md:w-[300px] lg:w-[400px] items-center gap-4'>
                   <video
                     ref={leftVideoRef}
                     src={selectedLeftAvatar?.video}
-                    className="w-full h-auto md:h-[300px] lg:h-[400px] object-cover rounded-lg"
+                    className='w-full h-auto md:h-[300px] lg:h-[400px] object-cover rounded-lg'
                     muted
                     playsInline
                   />
-                  <div className="flex w-full md:w-[280px] lg:w-[300px] items-center gap-2 md:gap-4 lg:gap-5">
+                  <div className='flex w-full md:w-[280px] lg:w-[300px] items-center gap-2 md:gap-4 lg:gap-5'>
                     <Select
                       value={selectedLeftAvatar?.uid}
                       onValueChange={(value) =>
@@ -824,8 +826,8 @@ export const HomeScreen = () => {
                         )
                       }
                     >
-                      <SelectTrigger className="h-8 md:h-10 flex-1 bg-[#ffffff4c] rounded-xl border border-solid border-purple px-3 py-2 md:px-4 md:py-2.5">
-                        <SelectValue placeholder="Select User" />
+                      <SelectTrigger className='h-8 md:h-10 flex-1 bg-[#ffffff4c] rounded-xl border border-solid border-purple px-3 py-2 md:px-4 md:py-2.5'>
+                        <SelectValue placeholder='Select User' />
                       </SelectTrigger>
                       <SelectContent>
                         {leftAvatars.map((avatar) => (
@@ -835,9 +837,9 @@ export const HomeScreen = () => {
                         ))}
                       </SelectContent>
                     </Select>
-                    <Select>
-                      <SelectTrigger className="h-8 md:h-10 flex-1 bg-[#ffffff4c] rounded-xl border border-solid border-purple px-3 py-2 md:px-4 md:py-2.5">
-                        <SelectValue placeholder="Voice" />
+                    <Select value={userVoice} onValueChange={setUserVoice}>
+                      <SelectTrigger className='h-8 md:h-10 flex-1 bg-[#ffffff4c] rounded-xl border border-solid border-purple px-3 py-2 md:px-4 md:py-2.5'>
+                        <SelectValue placeholder='Select Voice' />
                       </SelectTrigger>
                       <SelectContent>
                         {leftAvatars.map((voice) => (
@@ -858,7 +860,7 @@ export const HomeScreen = () => {
                 </div>
                 <div
                   ref={leftMessagesRef}
-                  className="flex flex-col w-full md:max-w-[250px] lg:max-w-[300px] items-start gap-6 md:gap-8 lg:gap-10 px-0 py-4 md:py-6 lg:py-10 overflow-y-auto max-h-[400px] custom-scrollbar"
+                  className='flex flex-col w-full md:max-w-[250px] lg:max-w-[300px] items-start gap-6 md:gap-8 lg:gap-10 px-0 py-4 md:py-6 lg:py-10 overflow-y-auto max-h-[400px] custom-scrollbar'
                 >
                   {chatMessages.map((msg, originalIndex) =>
                     msg.sender === "user" ? (
@@ -881,16 +883,16 @@ export const HomeScreen = () => {
                 </div>
               </div>
 
-              <div className="flex flex-col md:flex-row-reverse lg:flex-row-reverse items-center md:items-start lg:items-start gap-4 md:gap-6 lg:gap-8 w-full lg:w-1/2">
-                <div className="flex flex-col w-full md:w-[300px] lg:w-[400px] items-center gap-4">
+              <div className='flex flex-col md:flex-row-reverse lg:flex-row-reverse items-center md:items-start lg:items-start gap-4 md:gap-6 lg:gap-8 w-full lg:w-1/2'>
+                <div className='flex flex-col w-full md:w-[300px] lg:w-[400px] items-center gap-4'>
                   <video
                     ref={rightVideoRef}
                     src={selectedRightAvatar?.video}
-                    className="w-full h-auto md:h-[360px] lg:h-[400px] object-cover rounded-lg"
+                    className='w-full h-auto md:h-[360px] lg:h-[400px] object-cover rounded-lg'
                     muted
                     playsInline
                   />
-                  <div className="flex w-full md:w-[280px] lg:w-[300px] items-center gap-2 md:gap-4 lg:gap-5">
+                  <div className='flex w-full md:w-[280px] lg:w-[300px] items-center gap-2 md:gap-4 lg:gap-5'>
                     <Select
                       value={selectedRightAvatar?.uid}
                       onValueChange={(value) =>
@@ -899,8 +901,8 @@ export const HomeScreen = () => {
                         )
                       }
                     >
-                      <SelectTrigger className="h-8 md:h-10 flex-1 bg-[#ffffff4c] rounded-xl border border-solid border-purple px-3 py-2 md:px-4 md:py-2.5">
-                        <SelectValue placeholder="Select AI Avatar" />
+                      <SelectTrigger className='h-8 md:h-10 flex-1 bg-[#ffffff4c] rounded-xl border border-solid border-purple px-3 py-2 md:px-4 md:py-2.5'>
+                        <SelectValue placeholder='Select AI Avatar' />
                       </SelectTrigger>
                       <SelectContent>
                         {rightAvatars.map((avatar) => (
@@ -910,9 +912,9 @@ export const HomeScreen = () => {
                         ))}
                       </SelectContent>
                     </Select>
-                    <Select>
-                      <SelectTrigger className="h-8 md:h-10 flex-1 bg-[#ffffff4c] rounded-xl border border-solid border-purple px-3 py-2 md:px-4 md:py-2.5">
-                        <SelectValue placeholder="Voice" />
+                    <Select value={aiVoice} onValueChange={setAiVoice}>
+                      <SelectTrigger className='h-8 md:h-10 flex-1 bg-[#ffffff4c] rounded-xl border border-solid border-purple px-3 py-2 md:px-4 md:py-2.5'>
+                        <SelectValue placeholder='Select Voice' />
                       </SelectTrigger>
                       <SelectContent>
                         {rightAvatars.map((voice) => (
@@ -929,7 +931,7 @@ export const HomeScreen = () => {
                 </div>
                 <div
                   ref={rightMessagesRef}
-                  className="flex flex-col w-full md:max-w-[250px] lg:max-w-[300px] items-end gap-8 md:gap-10 lg:gap-10 pt-4 md:pt-10 lg:pt-20 pb-0 px-0 overflow-y-auto max-h-[400px]"
+                  className='flex flex-col w-full md:max-w-[250px] lg:max-w-[300px] items-end gap-8 md:gap-10 lg:gap-10 pt-4 md:pt-10 lg:pt-20 pb-0 px-0 overflow-y-auto max-h-[400px]'
                 >
                   {chatMessages.map((msg, originalIndex) =>
                     msg.sender === "ai" ? (
@@ -953,38 +955,38 @@ export const HomeScreen = () => {
               </div>
             </div>
 
-            <div className="flex flex-col max-w-[400px] items-center gap-2 mt-8 md:-mt-4 md:gap-2 mx-auto p-0">
+            <div className='flex flex-col max-w-[400px] items-center gap-2 mt-8 md:-mt-4 md:gap-2 mx-auto p-0'>
               <Link
-                href="/upload-avatar"
-                className="bg-purple rounded-xl text-white font-medium text-xs md:text-sm h-8 md:h-10 px-4 flex justify-center items-center"
+                href='/upload-avatar'
+                className='bg-purple rounded-xl text-white font-medium text-xs md:text-sm h-8 md:h-10 px-4 flex justify-center items-center'
               >
                 Upload New Avatar
               </Link>
               <Button
                 onClick={handleSaveChat}
-                className="bg-purple rounded-xl text-white font-medium text-xs md:text-sm h-8 md:h-10 px-4 flex justify-center items-center"
+                className='bg-purple rounded-xl text-white font-medium text-xs md:text-sm h-8 md:h-10 px-4 flex justify-center items-center'
               >
                 💾 Save This Chat
               </Button>
-              <div className="flex justify-center max-w-[400px] items-center gap-2">
+              <div className='flex justify-center max-w-[400px] items-center gap-2'>
                 <Button
                   onClick={handleReplayDialogue}
-                  className="bg-purple rounded-xl text-white font-medium text-xs md:text-sm h-8 md:h-10 px-4 flex justify-center items-center"
+                  className='bg-purple rounded-xl text-white font-medium text-xs md:text-sm h-8 md:h-10 px-4 flex justify-center items-center'
                 >
                   {isPlaying ? "⏸️ Pause Dialogue" : "⏯️ Replay Dialogue"}
                 </Button>
                 <Button
                   onClick={handleCopyChat}
-                  className="bg-purple rounded-xl text-white font-medium text-xs md:text-sm h-8 md:h-10 px-4 flex justify-center items-center"
+                  className='bg-purple rounded-xl text-white font-medium text-xs md:text-sm h-8 md:h-10 px-4 flex justify-center items-center'
                 >
                   📋 Copy Chat
                 </Button>
               </div>
               <Select onValueChange={handleLoadChat}>
-                <SelectTrigger className="bg-purple rounded-xl border-none text-white font-medium text-xs md:text-sm h-8 md:h-10 px-4 flex justify-between items-center">
-                  <SelectValue placeholder="📂 Select Conversation" />
+                <SelectTrigger className='bg-purple rounded-xl border-none text-white font-medium text-xs md:text-sm h-8 md:h-10 px-4 flex justify-between items-center'>
+                  <SelectValue placeholder='📂 Select Conversation' />
                 </SelectTrigger>
-                <SelectContent className="bg-white text-black border border-purple rounded-xl">
+                <SelectContent className='bg-white text-black border border-purple rounded-xl'>
                   {savedChats.map((chat) => (
                     <SelectItem key={chat.uid} value={chat.uid}>
                       {chat.title}
@@ -994,8 +996,8 @@ export const HomeScreen = () => {
               </Select>
             </div>
 
-            <Card className="flex flex-col md:flex-row items-center gap-2 p-1 md:p-2 lg:p-4 relative self-stretch w-full bg-[#ffffff4c] mt-6 md:mt-8 rounded-[20px]">
-              <CardContent className="flex flex-col md:flex-row items-center gap-3 p-0 w-full">
+            <Card className='flex flex-col md:flex-row items-center gap-2 p-1 md:p-2 lg:p-4 relative self-stretch w-full bg-[#ffffff4c] mt-6 md:mt-8 rounded-[20px]'>
+              <CardContent className='flex flex-col md:flex-row items-center gap-3 p-0 w-full'>
                 <Button
                   onClick={() => {
                     setConversationId(uuidv4());
@@ -1009,15 +1011,15 @@ export const HomeScreen = () => {
                       },
                     });
                   }}
-                  className="h-10 md:h-12 bg-purple rounded-xl font-medium text-xs md:text-sm w-full md:w-auto"
+                  className='h-10 md:h-12 bg-purple rounded-xl font-medium text-xs md:text-sm w-full md:w-auto'
                 >
                   Start New Conversation
                 </Button>
-                <div className="flex flex-col md:flex-row items-center gap-3 w-full">
-                  <div className="flex items-center gap-1 md:gap-4 px-1 md:px-2 py-1 md:py-2 relative flex-1 bg-[#ffffff33] rounded-xl w-full md:w-auto">
+                <div className='flex flex-col md:flex-row items-center gap-3 w-full'>
+                  <div className='flex items-center gap-1 md:gap-4 px-1 md:px-2 py-1 md:py-2 relative flex-1 bg-[#ffffff33] rounded-xl w-full md:w-auto'>
                     <Input
-                      className="h-8 md:h-10 flex-1 bg-white rounded-2xl border border-solid border-purple px-4 py-2 font-medium text-[#101010] text-xs"
-                      placeholder="User says..."
+                      className='h-8 md:h-10 flex-1 bg-white rounded-2xl border border-solid border-purple px-4 py-2 font-medium text-[#101010] text-xs'
+                      placeholder='User says...'
                       value={leftUserInput}
                       onChange={(e) => setLeftUserInput(e.target.value)}
                       onKeyPress={(e) =>
@@ -1038,19 +1040,19 @@ export const HomeScreen = () => {
                         alt={activeMic === "user" ? "mic off" : "mic"}
                         width={24}
                         height={24}
-                        className="w-5 h-5 md:w-6 md:h-6"
+                        className='w-5 h-5 md:w-6 md:h-6'
                       />
                     </Button>
                     <Button
                       onClick={() => handleSendMessage(leftUserInput, "user")}
-                      className="h-8 md:h-10 px-2 md:px-4 py-2 md:py-4 bg-purple rounded-xl font-medium text-sm md:text-base"
+                      className='h-8 md:h-10 px-2 md:px-4 py-2 md:py-4 bg-purple rounded-xl font-medium text-sm md:text-base'
                     >
                       Send
                     </Button>
                   </div>
-                  <div className="flex items-center gap-2 mt-3 md:mt-0">
+                  <div className='flex items-center gap-2 mt-3 md:mt-0'>
                     <Select value={personality} onValueChange={setPersonality}>
-                      <SelectTrigger className="max-w-32 md:max-w-40 h-8 md:h-10 bg-[#ffffff4c] rounded-xl border border-solid border-purple p-2">
+                      <SelectTrigger className='max-w-32 md:max-w-40 h-8 md:h-10 bg-[#ffffff4c] rounded-xl border border-solid border-purple p-2'>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -1067,27 +1069,27 @@ export const HomeScreen = () => {
                         ) : (
                           // Fallback options in case API fails
                           <>
-                            <SelectItem value="friendly">Friendly</SelectItem>
-                            <SelectItem value="formal">Formal</SelectItem>
-                            <SelectItem value="casual">Casual</SelectItem>
+                            <SelectItem value='friendly'>Friendly</SelectItem>
+                            <SelectItem value='formal'>Formal</SelectItem>
+                            <SelectItem value='casual'>Casual</SelectItem>
                           </>
                         )}
                       </SelectContent>
                     </Select>
                     <Select value={replyAs} onValueChange={setReplyAs}>
-                      <SelectTrigger className="max-w-48 md:min-w-28 h-8 md:h-10 bg-[#ffffff4c] rounded-xl border border-solid border-purple p-2">
+                      <SelectTrigger className='max-w-48 md:min-w-28 h-8 md:h-10 bg-[#ffffff4c] rounded-xl border border-solid border-purple p-2'>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="ai">Reply as AI</SelectItem>
-                        <SelectItem value="user">Reply as User</SelectItem>
+                        <SelectItem value='ai'>Reply as AI</SelectItem>
+                        <SelectItem value='user'>Reply as User</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="flex items-center gap-2 md:gap-4 px-2 md:px-4 py-2 md:py-3 relative flex-1 bg-[#ffffff33] rounded-xl w-full md:w-auto mt-3 md:mt-0">
+                  <div className='flex items-center gap-2 md:gap-4 px-2 md:px-4 py-2 md:py-3 relative flex-1 bg-[#ffffff33] rounded-xl w-full md:w-auto mt-3 md:mt-0'>
                     <Input
-                      className="h-8 md:h-10 flex-1 bg-white rounded-2xl border border-solid border-purple px-4 py-2 font-medium text-[#101010] text-xs"
-                      placeholder="AI says..."
+                      className='h-8 md:h-10 flex-1 bg-white rounded-2xl border border-solid border-purple px-4 py-2 font-medium text-[#101010] text-xs'
+                      placeholder='AI says...'
                       value={rightUserInput}
                       onChange={(e) => setRightUserInput(e.target.value)}
                       onKeyPress={(e) =>
@@ -1109,13 +1111,13 @@ export const HomeScreen = () => {
                         alt={activeMic === "ai" ? "mic off" : "mic"}
                         width={24}
                         height={24}
-                        className="w-5 h-5 md:w-6 md:h-6"
+                        className='w-5 h-5 md:w-6 md:h-6'
                       />
                     </Button>
                     <Button
                       onClick={() => handleSendMessage(rightUserInput, "ai")}
                       disabled={replyAs === "ai"}
-                      className="h-8 md:h-10 px-2 md:px-4 py-2 md:py-4 bg-purple rounded-xl font-medium text-sm md:text-base"
+                      className='h-8 md:h-10 px-2 md:px-4 py-2 md:py-4 bg-purple rounded-xl font-medium text-sm md:text-base'
                     >
                       Send
                     </Button>
@@ -1129,11 +1131,11 @@ export const HomeScreen = () => {
                   } rounded-xl font-medium text-sm md:text-base mt-3 md:mt-0 w-full md:w-auto`}
                 >
                   <Image
-                    src="/mic-off.png"
-                    alt="mic off"
+                    src='/mic-off.png'
+                    alt='mic off'
                     width={24}
                     height={24}
-                    className="w-5 h-5 md:w-6 md:h-6"
+                    className='w-5 h-5 md:w-6 md:h-6'
                   />
                   {activeMic
                     ? `Stop ${activeMic === "user" ? "User" : "AI"} Mic`
@@ -1146,36 +1148,36 @@ export const HomeScreen = () => {
               open={showAnalysisModal}
               onOpenChange={setShowAnalysisModal}
             >
-              <DialogContent className="flex flex-col items-start gap-3 md:gap-5 p-4 md:p-6 bg-[#ffffff33] rounded-[20px] border border-purple sm:max-w-[800px] max-h-[90vh] overflow-auto">
+              <DialogContent className='flex flex-col items-start gap-3 md:gap-5 p-4 md:p-6 bg-[#ffffff33] rounded-[20px] border border-purple sm:max-w-[800px] max-h-[90vh] overflow-auto'>
                 <DialogHeader>
                   <DialogTitle className="flex items-center gap-3 md:gap-6 font-['Inter',Helvetica] font-semibold text-white text-lg md:text-xl">
                     <img
-                      className="relative w-8 h-8 md:w-10 md:h-10"
-                      alt="AI Analysis Icon"
-                      src="/frame.svg"
+                      className='relative w-8 h-8 md:w-10 md:h-10'
+                      alt='AI Analysis Icon'
+                      src='/frame.svg'
                     />
                     AI Analysis
                   </DialogTitle>
                 </DialogHeader>
-                <div className="flex flex-col items-start gap-3 md:gap-5 relative self-stretch w-full">
+                <div className='flex flex-col items-start gap-3 md:gap-5 relative self-stretch w-full'>
                   <Textarea
-                    className="h-[100px] md:h-[150px] p-3 md:p-5 bg-white rounded-xl border border-solid border-purple font-medium text-[#707070] text-sm md:text-base w-full"
-                    placeholder="Paste chat history or any text here..."
+                    className='h-[100px] md:h-[150px] p-3 md:p-5 bg-white rounded-xl border border-solid border-purple font-medium text-[#707070] text-sm md:text-base w-full'
+                    placeholder='Paste chat history or any text here...'
                     value={analyzeText}
                     onChange={(e) => setAnalyzeText(e.target.value)}
                   />
                 </div>
                 {analysisResult && (
-                  <div className="mt-4 p-4 bg-white rounded-xl w-full">
-                    <h3 className="font-semibold text-lg text-[#7630b5]">
+                  <div className='mt-4 p-4 bg-white rounded-xl w-full'>
+                    <h3 className='font-semibold text-lg text-[#7630b5]'>
                       Analysis Result:
                     </h3>
-                    <p className="text-[#101010]">{analysisResult}</p>
+                    <p className='text-[#101010]'>{analysisResult}</p>
                   </div>
                 )}
                 <Button
                   onClick={handleAnalyzeText}
-                  className="w-28 md:w-40 h-8 md:h-10 px-4 md:px-6 py-2 md:py-2 kış5 bg-purple rounded-xl font-medium text-sm md:text-base"
+                  className='w-28 md:w-40 h-8 md:h-10 px-4 md:px-6 py-2 md:py-2 kış5 bg-purple rounded-xl font-medium text-sm md:text-base'
                 >
                   Analyze
                 </Button>
@@ -1189,35 +1191,35 @@ export const HomeScreen = () => {
                 if (!open) setChatTitle("");
               }}
             >
-              <DialogContent className="flex flex-col items-start gap-4 p-6 bg-white rounded-xl border border-purple sm:max-w-[500px]">
-                <DialogHeader className="w-full">
+              <DialogContent className='flex flex-col items-start gap-4 p-6 bg-white rounded-xl border border-purple sm:max-w-[500px]'>
+                <DialogHeader className='w-full'>
                   <DialogTitle className="font-['Inter',Helvetica] font-semibold text-[#7630b5] text-xl text-center">
                     Save Conversation
                   </DialogTitle>
                 </DialogHeader>
-                <div className="flex flex-col items-start gap-3 w-full">
-                  <label className="font-medium text-[#101010]">
+                <div className='flex flex-col items-start gap-3 w-full'>
+                  <label className='font-medium text-[#101010]'>
                     Conversation Title
                   </label>
                   <Input
-                    className="h-12 p-4 bg-white rounded-xl border border-solid border-purple font-medium text-[#101010] w-full"
-                    placeholder="Enter a title for this conversation"
+                    className='h-12 p-4 bg-white rounded-xl border border-solid border-purple font-medium text-[#101010] w-full'
+                    placeholder='Enter a title for this conversation'
                     value={chatTitle}
                     onChange={(e) => setChatTitle(e.target.value)}
                     autoFocus
                   />
                 </div>
-                <div className="flex justify-end gap-4 w-full mt-4">
+                <div className='flex justify-end gap-4 w-full mt-4'>
                   <Button
-                    variant="outline"
+                    variant='outline'
                     onClick={() => setShowSaveChatDialog(false)}
-                    className="h-12 px-6 py-2.5 border border-solid border-purple text-[#7630b5] rounded-xl font-medium"
+                    className='h-12 px-6 py-2.5 border border-solid border-purple text-[#7630b5] rounded-xl font-medium'
                   >
                     Cancel
                   </Button>
                   <Button
                     onClick={submitSaveChat}
-                    className="h-12 px-6 py-2.5 bg-purple rounded-xl font-medium"
+                    className='h-12 px-6 py-2.5 bg-purple rounded-xl font-medium'
                     disabled={!chatTitle.trim()}
                   >
                     Save
