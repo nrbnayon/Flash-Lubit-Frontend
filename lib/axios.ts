@@ -1,10 +1,16 @@
 // lib\axios.ts
 // lib\axios.ts
-import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import Cookies from 'js-cookie';
+import axios, {
+  AxiosError,
+  AxiosInstance,
+  AxiosRequestConfig,
+  AxiosResponse,
+} from "axios";
+import Cookies from "js-cookie";
 
 // Constants
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://192.168.10.251:8000/api';
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL || "https://flash.zamansheikh.com/api";
 const ACCESS_TOKEN_COOKIE = "accessToken";
 const REFRESH_TOKEN_COOKIE = "refreshToken";
 
@@ -22,8 +28,8 @@ const createAxiosInstance = (config?: AxiosRequestConfig): AxiosInstance => {
   const instance = axios.create({
     baseURL: API_BASE_URL,
     headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
+      "Content-Type": "application/json",
+      Accept: "application/json",
     },
     withCredentials: true, // Important for cookies
     ...config,
@@ -45,7 +51,7 @@ const createAxiosInstance = (config?: AxiosRequestConfig): AxiosInstance => {
         request.reject(error);
       } else if (token) {
         if (request.config.headers) {
-          request.config.headers['Authorization'] = `Bearer ${token}`;
+          request.config.headers["Authorization"] = `Bearer ${token}`;
         }
         request.resolve(instance(request.config));
       }
@@ -58,7 +64,7 @@ const createAxiosInstance = (config?: AxiosRequestConfig): AxiosInstance => {
     (config) => {
       const accessToken = Cookies.get(ACCESS_TOKEN_COOKIE);
       if (accessToken && config.headers) {
-        config.headers['Authorization'] = `Bearer ${accessToken}`;
+        config.headers["Authorization"] = `Bearer ${accessToken}`;
       }
       return config;
     },
@@ -69,10 +75,16 @@ const createAxiosInstance = (config?: AxiosRequestConfig): AxiosInstance => {
   instance.interceptors.response.use(
     (response) => response,
     async (error: AxiosError) => {
-      const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
-      
+      const originalRequest = error.config as AxiosRequestConfig & {
+        _retry?: boolean;
+      };
+
       // If error is not 401 (Unauthorized) or request has already been retried, reject
-      if (!error.response || error.response.status !== 401 || originalRequest._retry) {
+      if (
+        !error.response ||
+        error.response.status !== 401 ||
+        originalRequest._retry
+      ) {
         return Promise.reject(error);
       }
 
@@ -88,11 +100,11 @@ const createAxiosInstance = (config?: AxiosRequestConfig): AxiosInstance => {
 
       try {
         const refreshToken = Cookies.get(REFRESH_TOKEN_COOKIE);
-        
+
         if (!refreshToken) {
           // No refresh token available, force logout
           handleLogout();
-          return Promise.reject(new Error('No refresh token available'));
+          return Promise.reject(new Error("No refresh token available"));
         }
 
         // Call refresh token endpoint
@@ -107,12 +119,14 @@ const createAxiosInstance = (config?: AxiosRequestConfig): AxiosInstance => {
 
         // Update Authorization header for original request
         if (originalRequest.headers) {
-          originalRequest.headers['Authorization'] = `Bearer ${data.accessToken}`;
+          originalRequest.headers[
+            "Authorization"
+          ] = `Bearer ${data.accessToken}`;
         }
 
         // Process queued requests
         processQueue(null, data.accessToken);
-        
+
         // Retry the original request
         return instance(originalRequest);
       } catch (refreshError) {
@@ -148,8 +162,8 @@ export const saveTokens = (tokens: AuthTokens): void => {
  * Remove authentication tokens from cookies
  */
 export const clearTokens = (): void => {
-  Cookies.remove(ACCESS_TOKEN_COOKIE, { path: '/' });
-  Cookies.remove(REFRESH_TOKEN_COOKIE, { path: '/' });
+  Cookies.remove(ACCESS_TOKEN_COOKIE, { path: "/" });
+  Cookies.remove(REFRESH_TOKEN_COOKIE, { path: "/" });
 };
 
 /**
@@ -157,7 +171,7 @@ export const clearTokens = (): void => {
  */
 export const handleLogout = (): void => {
   clearTokens();
-  };
+};
 
 /**
  * Get the current access token

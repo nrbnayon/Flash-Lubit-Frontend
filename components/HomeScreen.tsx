@@ -50,7 +50,7 @@ interface Message {
 }
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_ASSETS_URL || "http://192.168.10.251:8000";
+  process.env.NEXT_PUBLIC_API_ASSETS_URL || "https://flash.zamansheikh.com/api";
 
 const getFullUrl = (path: string): string => {
   if (!path) return "";
