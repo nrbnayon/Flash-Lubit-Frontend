@@ -183,14 +183,86 @@ export const HomeScreen = () => {
     }
   };
 
+  // const handleSendMessage = async (text: string, sender: "user" | "ai") => {
+  //   if (!text.trim()) return;
+  //   if (!selectedLeftAvatar || !selectedRightAvatar) {
+  //     toast.error("Please select both user and AI avatars.");
+  //     return;
+  //   }
+
+  //   if (sender === "ai" && replyAs === "ai") return;
+
+  //   const effectiveReplyAs = sender === "user" ? "ai" : "user";
+  //   const payload: SpeakPayload = {
+  //     conversation_id: conversationId,
+  //     text,
+  //     sender_type: sender.toUpperCase(),
+  //     user_voice_name: userVoice || selectedLeftAvatar.voice_name,
+  //     ai_voice_name: aiVoice || selectedRightAvatar.voice_name,
+  //     reply_as: effectiveReplyAs.toUpperCase(),
+  //     mode: personality.toLowerCase(),
+  //     reply_text: text,
+  //   };
+
+  //   // console.log("Send message payload:::", payload)
+
+  //   try {
+  //     const response = await speakApi(payload);
+  //     const newMessage: Message = {
+  //       text,
+  //       sender,
+  //       audioUrl: getFullUrl(
+  //         sender === "user" ? response.user_audio : response.ai_audio
+  //       ),
+  //     };
+
+  //     setChatMessages((prev) => [...prev, newMessage]);
+
+  //     setTimeout(() => {
+  //       scrollToBottom(sender);
+  //     }, 100);
+
+  //     await playAudioWithVideo(
+  //       sender === "user" ? leftVideoRef : rightVideoRef,
+  //       newMessage.audioUrl || ""
+  //     );
+  //     if (sender === "user") setLeftUserInput("");
+  //     else setRightUserInput("");
+
+  //     if (replyAs === "ai" && sender === "user" && response.reply) {
+  //       const replySender = "ai";
+  //       const replyMessage: Message = {
+  //         text: response.reply,
+  //         sender: replySender,
+  //         audioUrl: getFullUrl(response.ai_audio),
+  //       };
+  //       setChatMessages((prev) => [...prev, replyMessage]);
+
+  //       setTimeout(() => {
+  //         scrollToBottom("ai");
+  //       }, 100);
+
+  //       await playAudioWithVideo(rightVideoRef, replyMessage.audioUrl || "");
+  //     }
+  //   } catch (error) {
+  //     toast.error("Failed to send message. Please try again.");
+  //   }
+  // };
+
+  // Improved handleSendMessage to work better with speech recognition
   const handleSendMessage = async (text: string, sender: "user" | "ai") => {
     if (!text.trim()) return;
+
     if (!selectedLeftAvatar || !selectedRightAvatar) {
       toast.error("Please select both user and AI avatars.");
       return;
     }
 
-    if (sender === "ai" && replyAs === "ai") return;
+    // Check if we should allow sending this message based on sender and replyAs mode
+    if (sender === "ai" && replyAs === "ai") {
+      toast.error("Cannot send AI message when 'Reply as AI' is selected.");
+      return;
+    }
 
     const effectiveReplyAs = sender === "user" ? "ai" : "user";
     const payload: SpeakPayload = {
@@ -203,8 +275,6 @@ export const HomeScreen = () => {
       mode: personality.toLowerCase(),
       reply_text: text,
     };
-
-    // console.log("Send message payload:::", payload)
 
     try {
       const response = await speakApi(payload);
@@ -226,9 +296,11 @@ export const HomeScreen = () => {
         sender === "user" ? leftVideoRef : rightVideoRef,
         newMessage.audioUrl || ""
       );
+
       if (sender === "user") setLeftUserInput("");
       else setRightUserInput("");
 
+      // Handle AI automatic reply when user sends a message and Reply as AI is selected
       if (replyAs === "ai" && sender === "user" && response.reply) {
         const replySender = "ai";
         const replyMessage: Message = {
@@ -236,6 +308,7 @@ export const HomeScreen = () => {
           sender: replySender,
           audioUrl: getFullUrl(response.ai_audio),
         };
+
         setChatMessages((prev) => [...prev, replyMessage]);
 
         setTimeout(() => {
@@ -245,6 +318,7 @@ export const HomeScreen = () => {
         await playAudioWithVideo(rightVideoRef, replyMessage.audioUrl || "");
       }
     } catch (error) {
+      console.error("Message sending error:", error);
       toast.error("Failed to send message. Please try again.");
     }
   };
@@ -685,75 +759,180 @@ export const HomeScreen = () => {
   // };
 
   const startMic = (sender: "user" | "ai") => {
+    // Don't allow AI mic when Reply as AI is selected
+    if (sender === "ai" && replyAs === "ai") {
+      toast.error("Cannot use AI microphone when 'Reply as AI' is selected.");
+      return;
+    }
+
+    // If this mic is already active, stop it
     if (activeMic === sender) {
       stopMic();
       return;
     }
 
+    // Stop any existing mic before starting new one
+    stopMic();
+
     const SpeechRecognition =
       window.SpeechRecognition || window.webkitSpeechRecognition;
+
     if (!SpeechRecognition) {
       toast.error("Speech recognition is not supported in this browser.");
       return;
     }
 
-    stopMic();
-
+    // Create and configure the recognition object
     const recognition = new SpeechRecognition();
     recognition.lang = "en-US";
     recognition.interimResults = true;
-    recognition.continuous = false; // Stop after one utterance
+    recognition.continuous = true;
 
     let fullTranscript = "";
+    let finalTranscriptDetected = false;
+    let isRecognitionActive = true;
+
+    const restartRecognition = () => {
+      if (!isRecognitionActive) return;
+
+      try {
+        recognition.start();
+      } catch (error) {
+        console.error("Error restarting speech recognition:", error);
+        setTimeout(restartRecognition, 1000);
+      }
+    };
 
     recognition.onstart = () => {
       setActiveMic(sender);
-      toast.success("Microphone is active. Start speaking...");
+      toast.success(
+        `${
+          sender === "user" ? "User" : "AI"
+        } microphone is active. Start speaking...`
+      );
     };
 
     recognition.onresult = (event: any) => {
-      let transcript = "";
-      for (let i = 0; i < event.results.length; ++i) {
-        transcript += event.results[i][0].transcript;
+      let interimTranscript = "";
+
+      // Process all results including interim
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
+        const transcript = event.results[i][0].transcript;
+
         if (event.results[i].isFinal) {
-          fullTranscript = event.results[i][0].transcript;
-          if (sender === "user") setLeftUserInput(fullTranscript);
-          else setRightUserInput(fullTranscript);
-          handleSendMessage(fullTranscript, sender); // Send message
-          recognition.stop(); // Stop recognition after final result
+          fullTranscript = transcript;
+          finalTranscriptDetected = true;
+
+          // Update the appropriate input field
+          if (sender === "user") {
+            setLeftUserInput(fullTranscript);
+          } else {
+            setRightUserInput(fullTranscript);
+          }
+
+          // Process the final result
+          processRecognitionResult(fullTranscript, sender);
+
+          // Reset for next speech segment
+          fullTranscript = "";
         } else {
-          // Update input with interim results
-          if (sender === "user") setLeftUserInput(transcript);
-          else setRightUserInput(transcript);
+          interimTranscript += transcript;
+
+          // Update the input field with interim results
+          if (sender === "user") {
+            setLeftUserInput(interimTranscript);
+          } else {
+            setRightUserInput(interimTranscript);
+          }
         }
       }
     };
 
+    // Process the final speech recognition result
+    const processRecognitionResult = (text: string, sender: "user" | "ai") => {
+      if (!text.trim()) return;
+
+      // Stop recognition temporarily while processing this result
+      try {
+        recognition.stop();
+      } catch (e) {
+        console.error("Error stopping recognition temporarily:", e);
+      }
+
+      // Send the message
+      handleSendMessage(text, sender);
+
+      // Clear the input field
+      if (sender === "user") {
+        setLeftUserInput("");
+      } else {
+        setRightUserInput("");
+      }
+
+      // Restart recognition after a brief pause to allow processing
+      setTimeout(() => {
+        if (isRecognitionActive) {
+          try {
+            recognition.start();
+          } catch (e) {
+            console.error("Error restarting recognition:", e);
+            restartRecognition();
+          }
+        }
+      }, 500);
+    };
+
     recognition.onerror = (event: any) => {
-      console.error(`Speech recognition error: ${event.error}`);
-      setActiveMic(null);
-      toast.error(`Speech recognition error: ${event.error}`);
+      console.warn(`Speech recognition error: ${event.error}`);
+
+      // Handle critical errors that should stop recognition
+      if (event.error === "not-allowed") {
+        isRecognitionActive = false;
+        setActiveMic(null);
+        toast.error(
+          "Microphone access was denied. Please check your browser settings."
+        );
+        return;
+      }
+
+      // For other errors, we'll let the onend handler restart if needed
     };
 
     recognition.onend = () => {
-      setActiveMic(null);
-      toast.success("Microphone stopped.");
+      console.log("Speech recognition service disconnected");
+
+      // Only restart if still active and no final transcript was just detected
+      if (isRecognitionActive && !finalTranscriptDetected) {
+        console.log("Restarting speech recognition...");
+        setTimeout(restartRecognition, 300);
+      }
+
+      // Reset the final transcript flag
+      finalTranscriptDetected = false;
     };
 
+    // Store the recognition reference for later stopping
+    recognitionRef.current = {
+      recognition,
+      stop: () => {
+        isRecognitionActive = false;
+        try {
+          recognition.stop();
+        } catch (e) {
+          console.error("Error stopping recognition:", e);
+        }
+      },
+    };
+
+    // Start the recognition
     try {
       recognition.start();
     } catch (error) {
       console.error("Error starting speech recognition:", error);
       toast.error("Failed to start speech recognition. Please try again.");
+      isRecognitionActive = false;
       setActiveMic(null);
     }
-
-    recognitionRef.current = {
-      recognition,
-      stop: () => {
-        recognition.stop();
-      },
-    };
   };
 
   const stopMic = () => {
