@@ -54,17 +54,21 @@
   box-shadow: 0 0 10px rgba(118, 48, 181, 0.5);
 }
 
-@keyframes blink {
+.blinking {
+  animation: glow 0.8s infinite;
+}
+
+@keyframes glow {
   0% {
-    opacity: 1;
+    box-shadow: 0 0 5px 2px rgba(255, 0, 0, 0.5);
   }
 
   50% {
-    opacity: 0.4;
+    box-shadow: 0 0 10px 5px rgba(255, 0, 0, 0.8);
   }
 
   100% {
-    opacity: 1;
+    box-shadow: 0 0 5px 2px rgba(255, 0, 0, 0.5);
   }
 }
 

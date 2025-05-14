@@ -760,7 +760,7 @@ export const HomeScreen = () => {
         setTimeout(restartRecognition, 100);
       } else {
         setActiveMic(null);
-        toast.success("Microphone stopped.");
+        // toast.success("Microphone stopped.");
       }
     };
 
@@ -1138,11 +1138,11 @@ export const HomeScreen = () => {
                     />
                     <Button
                       onClick={() => startMic("user")}
-                      className={`w-8 md:w-10 p-2 md:p-3 ${
+                      className={`w-8 md:w-10 p-2 md:p-3 rounded-[40px] ${
                         activeMic === "user"
-                          ? "bg-red-500 mic-active"
+                          ? "bg-red-500 blinking"
                           : "bg-purple"
-                      } rounded-[40px]`}
+                      }`}
                     >
                       <Image
                         src={
@@ -1211,11 +1211,9 @@ export const HomeScreen = () => {
                     <Button
                       onClick={() => startMic("ai")}
                       disabled={replyAs === "ai"}
-                      className={`w-8 md:w-10 p-2 md:p-3 ${
-                        activeMic === "ai"
-                          ? "bg-red-500 mic-active"
-                          : "bg-purple"
-                      } rounded-[40px]`}
+                      className={`w-8 md:w-10 p-2 md:p-3 rounded-[40px] ${
+                        activeMic === "ai" ? "bg-red-500 blinking" : "bg-purple"
+                      }`}
                     >
                       <Image
                         src={
@@ -1239,7 +1237,7 @@ export const HomeScreen = () => {
                 <Button
                   onClick={stopMic}
                   disabled={!activeMic}
-                  className={`h-8 md:h-10 gap-2 px-4 py-2 ${
+                  className={`h-8 md:h-10 gap-2 px-6 py-2 ${
                     activeMic ? "bg-red-500" : "bg-purple opacity-60"
                   } rounded-xl font-medium text-sm md:text-base mt-3 md:mt-0 w-full md:w-auto`}
                 >
