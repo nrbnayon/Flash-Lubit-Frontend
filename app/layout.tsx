@@ -52,7 +52,7 @@ export const metadata: Metadata = {
       "Enhance productivity with our AI avatar assistant for streamlined communication",
     images: ["https://i.postimg.cc/d1mw0tv9/logo-1.png"],
   },
-  manifest: "/manifest.json",
+  // manifest: "/manifest.json",
   icons: {
     icon: "/favicon.ico",
     apple: "/apple-icon.png",
