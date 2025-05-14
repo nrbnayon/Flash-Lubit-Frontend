@@ -684,7 +684,7 @@ export const HomeScreen = () => {
   //   }
   // };
 
-  const startMic = (sender: "user" | "ai") => {
+  const startMic = (sender: "user" | "ai", autoSend: boolean = true) => {
     if (activeMic === sender) {
       stopMic();
       return;
@@ -702,9 +702,21 @@ export const HomeScreen = () => {
     const recognition = new SpeechRecognition();
     recognition.lang = "en-US";
     recognition.interimResults = true;
-    recognition.continuous = false; // Stop after one utterance
+    recognition.continuous = true;
 
     let fullTranscript = "";
+    let isRecognitionActive = true;
+
+    const restartRecognition = () => {
+      if (isRecognitionActive && fullTranscript.trim() === "") {
+        try {
+          recognition.start();
+        } catch (error) {
+          console.error("Error restarting speech recognition:", error);
+          setTimeout(restartRecognition, 100);
+        }
+      }
+    };
 
     recognition.onstart = () => {
       setActiveMic(sender);
@@ -713,31 +725,56 @@ export const HomeScreen = () => {
 
     recognition.onresult = (event: any) => {
       let transcript = "";
-      for (let i = 0; i < event.results.length; ++i) {
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
         transcript += event.results[i][0].transcript;
-        if (event.results[i].isFinal) {
-          fullTranscript = event.results[i][0].transcript;
-          if (sender === "user") setLeftUserInput(fullTranscript);
-          else setRightUserInput(fullTranscript);
-          handleSendMessage(fullTranscript, sender); // Send message
-          recognition.stop(); // Stop recognition after final result
-        } else {
-          // Update input with interim results
-          if (sender === "user") setLeftUserInput(transcript);
-          else setRightUserInput(transcript);
-        }
+      }
+      if (sender === "user") setLeftUserInput(transcript); // Real-time feedback
+      else setRightUserInput(transcript);
+      if (event.results[event.results.length - 1].isFinal && autoSend) {
+        fullTranscript = transcript;
+        recognitionRef.current?.stop();
+        handleSendMessage(fullTranscript, sender);
+        fullTranscript = "";
+        if (sender === "user") setLeftUserInput("");
+        else setRightUserInput("");
       }
     };
 
     recognition.onerror = (event: any) => {
-      console.error(`Speech recognition error: ${event.error}`);
-      setActiveMic(null);
-      toast.error(`Speech recognition error: ${event.error}`);
+      console.warn(`Speech recognition error: ${event.error}`);
+      if (event.error === "aborted" || event.error === "not-allowed") {
+        isRecognitionActive = false;
+        setActiveMic(null);
+        toast.error(`Speech recognition error: ${event.error}`);
+      } else if (event.error === "no-speech") {
+        toast.info("No speech detected. Keep speaking...");
+      } else {
+        toast.info(`Speech recognition issue: ${event.error}`);
+      }
     };
 
     recognition.onend = () => {
-      setActiveMic(null);
-      toast.success("Microphone stopped.");
+      console.log("Speech recognition service disconnected");
+      if (isRecognitionActive && fullTranscript.trim() === "") {
+        console.log("Restarting speech recognition...");
+        setTimeout(restartRecognition, 100);
+      } else {
+        setActiveMic(null);
+        toast.success("Microphone stopped.");
+      }
+    };
+
+    recognitionRef.current = {
+      recognition,
+      stop: () => {
+        isRecognitionActive = false;
+        try {
+          recognition.stop();
+        } catch (e) {
+          console.error("Error stopping recognition:", e);
+          toast.error("Failed to stop microphone. Please try again.");
+        }
+      },
     };
 
     try {
@@ -745,15 +782,9 @@ export const HomeScreen = () => {
     } catch (error) {
       console.error("Error starting speech recognition:", error);
       toast.error("Failed to start speech recognition. Please try again.");
+      isRecognitionActive = false;
       setActiveMic(null);
     }
-
-    recognitionRef.current = {
-      recognition,
-      stop: () => {
-        recognition.stop();
-      },
-    };
   };
 
   const stopMic = () => {
