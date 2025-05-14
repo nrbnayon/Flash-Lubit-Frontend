@@ -252,7 +252,9 @@ export function UploadAvatarForm() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="side">Select Avatar Type*</Label>
+              <Label htmlFor="side">
+                Select Avatar Type <span className="text-red-500">*</span>
+              </Label>
               <Select value={formData.side} onValueChange={handleSelectChange}>
                 <SelectTrigger
                   id="side"
