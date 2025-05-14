@@ -54,26 +54,22 @@
   box-shadow: 0 0 10px rgba(118, 48, 181, 0.5);
 }
 
-.blinking {
-  animation: glow 0.8s infinite;
-}
-
-@keyframes glow {
+@keyframes glowPulse {
   0% {
-    box-shadow: 0 0 5px 2px rgba(255, 0, 0, 0.5);
+    box-shadow: 0 0 5px rgba(118, 48, 181, 0.6);
   }
 
   50% {
-    box-shadow: 0 0 10px 5px rgba(255, 0, 0, 0.8);
+    box-shadow: 0 0 15px rgba(118, 48, 181, 0.8);
   }
 
   100% {
-    box-shadow: 0 0 5px 2px rgba(255, 0, 0, 0.5);
+    box-shadow: 0 0 5px rgba(118, 48, 181, 0.6);
   }
 }
 
-.mic-active {
-  animation: blink 1.5s infinite;
+.mic-active-glow {
+  animation: glowPulse 2s ease-in-out infinite;
 }
 
 @layer base {

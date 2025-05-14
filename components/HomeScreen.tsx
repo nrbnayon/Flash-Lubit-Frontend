@@ -1138,11 +1138,11 @@ export const HomeScreen = () => {
                     />
                     <Button
                       onClick={() => startMic("user")}
-                      className={`w-8 md:w-10 p-2 md:p-3 rounded-[40px] ${
+                      className={`w-8 md:w-10 p-2 md:p-3 ${
                         activeMic === "user"
-                          ? "bg-red-500 blinking"
+                          ? "bg-red-500 mic-active-glow"
                           : "bg-purple"
-                      }`}
+                      } rounded-[40px]`}
                     >
                       <Image
                         src={
@@ -1211,9 +1211,11 @@ export const HomeScreen = () => {
                     <Button
                       onClick={() => startMic("ai")}
                       disabled={replyAs === "ai"}
-                      className={`w-8 md:w-10 p-2 md:p-3 rounded-[40px] ${
-                        activeMic === "ai" ? "bg-red-500 blinking" : "bg-purple"
-                      }`}
+                      className={`w-8 md:w-10 p-2 md:p-3 ${
+                        activeMic === "ai"
+                          ? "bg-red-500 mic-active-glow"
+                          : "bg-purple"
+                      } rounded-[40px]`}
                     >
                       <Image
                         src={
