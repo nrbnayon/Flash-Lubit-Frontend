@@ -720,7 +720,7 @@ export const HomeScreen = () => {
 
     recognition.onstart = () => {
       setActiveMic(sender);
-      toast.success("Microphone is active. Start speaking...");
+      // toast.success("Microphone is active. Start speaking...");
     };
 
     recognition.onresult = (event: any) => {
@@ -754,9 +754,9 @@ export const HomeScreen = () => {
     };
 
     recognition.onend = () => {
-      console.log("Speech recognition service disconnected");
+      // console.log("Speech recognition service disconnected");
       if (isRecognitionActive && fullTranscript.trim() === "") {
-        console.log("Restarting speech recognition...");
+        // console.log("Restarting speech recognition...");
         setTimeout(restartRecognition, 100);
       } else {
         setActiveMic(null);
@@ -792,9 +792,9 @@ export const HomeScreen = () => {
       recognitionRef.current.stop();
       recognitionRef.current = null;
       setActiveMic(null);
-      toast.success("Microphone stopped.", {
-        style: { background: "#4caf50", color: "white", border: "none" },
-      });
+      // toast.success("Microphone stopped.", {
+      //   style: { background: "#4caf50", color: "white", border: "none" },
+      // });
     }
   };
 
@@ -954,7 +954,7 @@ export const HomeScreen = () => {
                               "N/A"
                             }
                           >
-                            {voice?.voice_name || "N/A"}
+                            {voice?.voice_name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -1021,11 +1021,8 @@ export const HomeScreen = () => {
                       </SelectTrigger>
                       <SelectContent>
                         {rightAvatars.map((voice) => (
-                          <SelectItem
-                            key={voice.uid}
-                            value={voice?.voice_name || "N/A"}
-                          >
-                            {voice?.voice_name || "N/A"}
+                          <SelectItem key={voice.uid} value={voice?.voice_name}>
+                            {voice?.voice_name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -1133,7 +1130,9 @@ export const HomeScreen = () => {
                     <Button
                       onClick={() => startMic("user")}
                       className={`w-8 md:w-10 p-2 md:p-3 ${
-                        activeMic === "user" ? "bg-red-500" : "bg-purple"
+                        activeMic === "user"
+                          ? "bg-red-500 mic-active"
+                          : "bg-purple"
                       } rounded-[40px]`}
                     >
                       <Image
@@ -1204,7 +1203,9 @@ export const HomeScreen = () => {
                       onClick={() => startMic("ai")}
                       disabled={replyAs === "ai"}
                       className={`w-8 md:w-10 p-2 md:p-3 ${
-                        activeMic === "ai" ? "bg-red-500" : "bg-purple"
+                        activeMic === "ai"
+                          ? "bg-red-500 mic-active"
+                          : "bg-purple"
                       } rounded-[40px]`}
                     >
                       <Image
@@ -1240,9 +1241,10 @@ export const HomeScreen = () => {
                     height={24}
                     className="w-5 h-5 md:w-6 md:h-6"
                   />
-                  {activeMic
+                  {/* {activeMic
                     ? `Stop ${activeMic === "user" ? "User" : "AI"} Mic`
-                    : "Stop Mic"}
+                    : "Stop Mic"} */}
+                  Stop Mic
                 </Button>
               </CardContent>
             </Card>

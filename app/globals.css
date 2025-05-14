@@ -49,6 +49,29 @@
   }
 }
 
+.active {
+  border: 2px solid #7630b5;
+  box-shadow: 0 0 10px rgba(118, 48, 181, 0.5);
+}
+
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.mic-active {
+  animation: blink 1.5s infinite;
+}
+
 @layer base {
   * {
     @apply border-border;
