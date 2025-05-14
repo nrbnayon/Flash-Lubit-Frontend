@@ -950,6 +950,7 @@ export const HomeScreen = () => {
                             key={voice.uid}
                             value={
                               voice?.voice_name ||
+                              leftAvatars[0]?.voice_name ||
                               selectedLeftAvatar?.voice_name ||
                               "N/A"
                             }
@@ -1021,7 +1022,15 @@ export const HomeScreen = () => {
                       </SelectTrigger>
                       <SelectContent>
                         {rightAvatars.map((voice) => (
-                          <SelectItem key={voice.uid} value={voice?.voice_name}>
+                          <SelectItem
+                            key={voice.uid}
+                            value={
+                              voice?.voice_name ||
+                              rightAvatars[0]?.voice_name ||
+                              selectedLeftAvatar?.voice_name ||
+                              "N/A"
+                            }
+                          >
                             {voice?.voice_name}
                           </SelectItem>
                         ))}
