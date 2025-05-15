@@ -183,6 +183,72 @@ export const HomeScreen = () => {
     }
   };
 
+  // const handleSendMessage = async (text: string, sender: "user" | "ai") => {
+  //   if (!text.trim()) return;
+  //   if (!selectedLeftAvatar || !selectedRightAvatar) {
+  //     toast.error("Please select both user and AI avatars.");
+  //     return;
+  //   }
+
+  //   if (sender === "ai" && replyAs === "ai") return;
+
+  //   const effectiveReplyAs = sender === "user" ? "ai" : "user";
+  //   const payload: SpeakPayload = {
+  //     conversation_id: conversationId,
+  //     text,
+  //     sender_type: sender.toUpperCase(),
+  //     user_voice_name: userVoice || selectedLeftAvatar.voice_name,
+  //     ai_voice_name: aiVoice || selectedRightAvatar.voice_name,
+  //     reply_as: effectiveReplyAs.toUpperCase(),
+  //     mode: personality.toLowerCase(),
+  //     reply_text: text,
+  //   };
+
+  //   // console.log("Send message payload:::", payload)
+
+  //   try {
+  //     const response = await speakApi(payload);
+  //     const newMessage: Message = {
+  //       text,
+  //       sender,
+  //       audioUrl: getFullUrl(
+  //         sender === "user" ? response.user_audio : response.ai_audio
+  //       ),
+  //     };
+
+  //     setChatMessages((prev) => [...prev, newMessage]);
+
+  //     setTimeout(() => {
+  //       scrollToBottom(sender);
+  //     }, 100);
+
+  //     await playAudioWithVideo(
+  //       sender === "user" ? leftVideoRef : rightVideoRef,
+  //       newMessage.audioUrl || ""
+  //     );
+  //     if (sender === "user") setLeftUserInput("");
+  //     else setRightUserInput("");
+
+  //     if (replyAs === "ai" && sender === "user" && response.reply) {
+  //       const replySender = "ai";
+  //       const replyMessage: Message = {
+  //         text: response.reply,
+  //         sender: replySender,
+  //         audioUrl: getFullUrl(response.ai_audio),
+  //       };
+  //       setChatMessages((prev) => [...prev, replyMessage]);
+
+  //       setTimeout(() => {
+  //         scrollToBottom("ai");
+  //       }, 100);
+
+  //       await playAudioWithVideo(rightVideoRef, replyMessage.audioUrl || "");
+  //     }
+  //   } catch (error) {
+  //     toast.error("Failed to send message. Please try again.");
+  //   }
+  // };
+
   const handleSendMessage = async (text: string, sender: "user" | "ai") => {
     if (!text.trim()) return;
     if (!selectedLeftAvatar || !selectedRightAvatar) {
@@ -190,21 +256,17 @@ export const HomeScreen = () => {
       return;
     }
 
-    if (sender === "ai" && replyAs === "ai") return;
-
-    const effectiveReplyAs = sender === "user" ? "ai" : "user";
+    // Use the replyAs state directly instead of deriving it from the sender
     const payload: SpeakPayload = {
       conversation_id: conversationId,
       text,
       sender_type: sender.toUpperCase(),
       user_voice_name: userVoice || selectedLeftAvatar.voice_name,
       ai_voice_name: aiVoice || selectedRightAvatar.voice_name,
-      reply_as: effectiveReplyAs.toUpperCase(),
+      reply_as: replyAs.toUpperCase(), 
       mode: personality.toLowerCase(),
       reply_text: text,
     };
-
-    // console.log("Send message payload:::", payload)
 
     try {
       const response = await speakApi(payload);
