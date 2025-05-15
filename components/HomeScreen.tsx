@@ -263,7 +263,7 @@ export const HomeScreen = () => {
       sender_type: sender.toUpperCase(),
       user_voice_name: userVoice || selectedLeftAvatar.voice_name,
       ai_voice_name: aiVoice || selectedRightAvatar.voice_name,
-      reply_as: replyAs.toUpperCase(), 
+      reply_as: replyAs.toUpperCase(),
       mode: personality.toLowerCase(),
       reply_text: text,
     };
@@ -311,6 +311,174 @@ export const HomeScreen = () => {
     }
   };
 
+  // const handleReplayDialogue = async () => {
+  //   if (isPlaying) {
+  //     setIsPlaying(false);
+  //     setCurrentPlayingIndex(null);
+  //     if (currentAudioRef.current) {
+  //       currentAudioRef.current.pause();
+  //       currentAudioRef.current = null;
+  //     }
+  //     if (currentVideoRef.current) {
+  //       currentVideoRef.current.loop = false;
+  //       currentVideoRef.current.pause();
+  //       currentVideoRef.current.currentTime = 0;
+  //       currentVideoRef.current = null;
+  //     }
+  //     toast.success("Replay stopped.", {
+  //       style: { background: "#4caf50", color: "white", border: "none" },
+  //     });
+  //     return;
+  //   }
+
+  //   if (chatMessages.length === 0) {
+  //     toast.error("No dialogue to replay.");
+  //     return;
+  //   }
+
+  //   let replayActive = true;
+  //   setIsPlaying(true);
+  //   toast.success("Starting replay...");
+
+  //   try {
+  //     const response = await replayDialogueApi({
+  //       conversation_id: conversationId,
+  //     });
+  //     const { chat_list, audio_list } = response;
+
+  //     if (!chat_list || !audio_list || chat_list.length === 0) {
+  //       throw new Error("Invalid replay data received");
+  //     }
+
+  //     for (let i = 0; i < chat_list.length && replayActive; i++) {
+  //       const msg = chat_list[i];
+  //       const audio = audio_list[i];
+  //       const sender = msg.user ? "user" : "ai";
+  //       if (!sender) continue;
+  //       const audioPath = sender === "user" ? audio.user : audio.ai;
+
+  //       if (!audioPath) {
+  //         console.warn(`Missing audio path for message ${i}`);
+  //         continue;
+  //       }
+
+  //       const audioUrl = getFullUrl(audioPath);
+  //       const videoRef = sender === "user" ? leftVideoRef : rightVideoRef;
+
+  //       const messageEl = messageRefs.current[i];
+  //       if (messageEl && headerRef.current) {
+  //         const headerHeight = headerRef.current.getBoundingClientRect().height;
+
+  //         const messageContainer =
+  //           sender === "user"
+  //             ? leftMessagesRef.current
+  //             : rightMessagesRef.current;
+  //         if (messageContainer) {
+  //           const messageRect = messageEl.getBoundingClientRect();
+  //           const containerRect = messageContainer.getBoundingClientRect();
+
+  //           if (
+  //             messageRect.bottom > containerRect.bottom ||
+  //             messageRect.top < containerRect.top
+  //           ) {
+  //             messageEl.scrollIntoView({
+  //               behavior: "smooth",
+  //               block: "nearest",
+  //             });
+  //           }
+  //           const scrollOffset =
+  //             messageRect.top -
+  //             containerRect.top +
+  //             messageContainer.scrollTop -
+  //             headerHeight -
+  //             10;
+  //           messageContainer.scrollTo({
+  //             top: scrollOffset,
+  //             behavior: "smooth",
+  //           });
+  //         }
+  //       }
+
+  //       setCurrentPlayingIndex(i);
+
+  //       try {
+  //         await new Promise((resolve, reject) => {
+  //           const audioElement = new Audio(audioUrl);
+  //           currentAudioRef.current = audioElement;
+
+  //           audioElement.addEventListener("canplaythrough", () => {
+  //             if (!replayActive) {
+  //               resolve(undefined);
+  //               return;
+  //             }
+
+  //             if (videoRef.current) {
+  //               currentVideoRef.current = videoRef.current;
+  //               videoRef.current.currentTime = 0;
+  //               videoRef.current.loop = true;
+  //               videoRef.current.play().catch((err) => {
+  //                 console.error(`Video playback that error: ${err.message}`);
+  //               });
+  //             }
+
+  //             audioElement.play().catch((err) => {
+  //               console.error(`Audio playback error: ${err.message}`);
+  //               reject(err);
+  //             });
+  //           });
+
+  //           audioElement.addEventListener("ended", () => {
+  //             if (videoRef.current) {
+  //               videoRef.current.loop = false;
+  //               videoRef.current.pause();
+  //               videoRef.current.currentTime = 0;
+  //             }
+  //             setCurrentPlayingIndex(null);
+  //             resolve(undefined);
+  //           });
+
+  //           audioElement.addEventListener("error", (e) => {
+  //             console.error(`Audio loading error for ${audioUrl}:`, e);
+  //             reject(new Error(`Failed to load audio: ${audioUrl}`));
+  //           });
+
+  //           audioElement.load();
+  //         });
+
+  //         if (replayActive) {
+  //           await new Promise((resolve) => setTimeout(resolve, 800));
+  //         }
+  //       } catch (error) {
+  //         console.error(`Error playing message ${i}:`, error);
+  //       }
+  //     }
+
+  //     toast.success("Replay finished successfully!", {
+  //       description: "All messages have been replayed.",
+  //       style: { background: "#4caf50", color: "white", border: "none" },
+  //     });
+  //   } catch (error) {
+  //     console.error("Replay error:", error);
+  //     toast.error(`Failed to replay dialogue`, {
+  //       description: (error as Error)?.message || "Please try again.",
+  //       style: { background: "#ff5757", color: "white", border: "none" },
+  //     });
+  //   } finally {
+  //     setIsPlaying(false);
+  //     setCurrentPlayingIndex(null);
+  //     if (currentAudioRef.current) {
+  //       currentAudioRef.current.pause();
+  //       currentAudioRef.current = null;
+  //     }
+  //     if (currentVideoRef.current) {
+  //       currentVideoRef.current.loop = false;
+  //       currentVideoRef.current.pause();
+  //       currentVideoRef.current.currentTime = 0;
+  //       currentVideoRef.current = null;
+  //     }
+  //   }
+  // };
+
   const handleReplayDialogue = async () => {
     if (isPlaying) {
       setIsPlaying(false);
@@ -350,11 +518,13 @@ export const HomeScreen = () => {
         throw new Error("Invalid replay data received");
       }
 
+      // Ensure chat_list and audio_list align with the original conversation
       for (let i = 0; i < chat_list.length && replayActive; i++) {
         const msg = chat_list[i];
         const audio = audio_list[i];
+
+        // Determine sender correctly
         const sender = msg.user ? "user" : "ai";
-        if (!sender) continue;
         const audioPath = sender === "user" ? audio.user : audio.ai;
 
         if (!audioPath) {
@@ -363,29 +533,28 @@ export const HomeScreen = () => {
         }
 
         const audioUrl = getFullUrl(audioPath);
-        const videoRef = sender === "user" ? leftVideoRef : rightVideoRef;
+        // Use the correct video ref based on sender and replyAs context
+        const videoRef =
+          sender === "user" && replyAs === "user" && i % 2 === 1
+            ? rightVideoRef
+            : sender === "user"
+            ? leftVideoRef
+            : rightVideoRef;
 
+        // Scroll to the message
         const messageEl = messageRefs.current[i];
         if (messageEl && headerRef.current) {
           const headerHeight = headerRef.current.getBoundingClientRect().height;
-
           const messageContainer =
-            sender === "user"
+            sender === "user" && replyAs === "user" && i % 2 === 1
+              ? rightMessagesRef.current
+              : sender === "user"
               ? leftMessagesRef.current
               : rightMessagesRef.current;
+
           if (messageContainer) {
             const messageRect = messageEl.getBoundingClientRect();
             const containerRect = messageContainer.getBoundingClientRect();
-
-            if (
-              messageRect.bottom > containerRect.bottom ||
-              messageRect.top < containerRect.top
-            ) {
-              messageEl.scrollIntoView({
-                behavior: "smooth",
-                block: "nearest",
-              });
-            }
             const scrollOffset =
               messageRect.top -
               containerRect.top +
@@ -417,7 +586,7 @@ export const HomeScreen = () => {
                 videoRef.current.currentTime = 0;
                 videoRef.current.loop = true;
                 videoRef.current.play().catch((err) => {
-                  console.error(`Video playback that error: ${err.message}`);
+                  console.error(`Video playback error: ${err.message}`);
                 });
               }
 
