@@ -1,22 +1,25 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { BackgroundDecoration } from "./ui/background-decoration";
 import api, { saveTokens } from "@/lib/axios";
+import { Eye, EyeOff } from "lucide-react";
 
 export function Login() {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
   const handleLogin = async () => {
-    if (!username || !password) {
+    if (!email || !password) {
       toast.error("Incorrect credentials", {
-        description: "Username and password are required.",
+        description: "Email and password are required.",
         style: {
           background: "#ff5757",
           color: "white",
@@ -29,12 +32,11 @@ export function Login() {
     setIsLoading(true);
     try {
       const response = await api.post("/login", {
-        username,
+        email,
         password,
       });
 
       if (response.data) {
-        // console.log("Response.data:", response.data);
         // Save tokens to cookies
         saveTokens({
           accessToken: response.data.accessToken,
@@ -88,30 +90,44 @@ export function Login() {
           🔐 Login
         </h2>
         <Input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           onKeyPress={handleKeyPress}
           className="mb-4"
           disabled={isLoading}
         />
-        <Input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          onKeyPress={handleKeyPress}
-          className="mb-4"
-          disabled={isLoading}
-        />
+        <div className="relative mb-4">
+          <Input
+            type={showPassword ? "text" : "password"}
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            onKeyPress={handleKeyPress}
+            disabled={isLoading}
+          />
+          <div
+            className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer"
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+          </div>
+        </div>
         <Button
           onClick={handleLogin}
-          className="w-full bg-purple hover:bg-purple/90"
+          className="w-full bg-purple hover:bg-purple/90 mb-4"
           disabled={isLoading}
         >
           {isLoading ? "Logging in..." : "Login"}
         </Button>
+
+        <div className="text-center text-sm">
+          Don't have an account?{" "}
+          <Link href="/register" className="text-blue-600 hover:underline">
+            Register
+          </Link>
+        </div>
       </div>
     </div>
   );
