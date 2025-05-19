@@ -195,19 +195,41 @@ export function UploadAvatarForm() {
     } catch (error: any) {
       console.error("Avatar upload failed:", error);
 
-      // Extract error message from API response if available
-      const errorMessage =
-        error.response?.data?.message ||
-        "There was an error uploading your avatar";
+      // Add specific handling for different error types
+      if (error.response?.status === 413) {
+        toast.error("Upload failed", {
+          description: "File size is too large. Please use a smaller file.",
+          style: {
+            background: "#ff5757",
+            color: "white",
+            border: "none",
+          },
+        });
+      } else if (error.code === "ERR_NETWORK") {
+        toast.error("Network error", {
+          description:
+            "Cannot connect to the server. Please check your internet connection.",
+          style: {
+            background: "#ff5757",
+            color: "white",
+            border: "none",
+          },
+        });
+      } else {
+        // Extract error message from API response if available
+        const errorMessage =
+          error.response?.data?.message ||
+          "There was an error uploading your avatar";
 
-      toast.error("Upload failed", {
-        description: errorMessage || "Please try again.",
-        style: {
-          background: "#ff5757",
-          color: "white",
-          border: "none",
-        },
-      });
+        toast.error("Upload failed", {
+          description: errorMessage || "Please try again.",
+          style: {
+            background: "#ff5757",
+            color: "white",
+            border: "none",
+          },
+        });
+      }
     } finally {
       setIsSubmitting(false);
     }
