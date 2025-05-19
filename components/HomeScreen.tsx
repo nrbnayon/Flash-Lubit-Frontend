@@ -1146,11 +1146,23 @@ export const HomeScreen = () => {
                 <div className="flex flex-col w-full md:w-[300px] lg:w-[400px] items-center gap-4">
                   <video
                     ref={leftVideoRef}
-                    src={selectedLeftAvatar?.video}
                     className="w-full h-auto md:h-[300px] lg:h-[400px] object-cover rounded-lg"
                     muted
                     playsInline
-                  />
+                    controls
+                  >
+                    <source
+                      src={selectedLeftAvatar?.video.replace(/\.\w+$/, ".mp4")}
+                      type="video/mp4"
+                    />
+                    <source src={selectedLeftAvatar?.video} type="video/ogg" />
+                    <source
+                      src={selectedLeftAvatar?.video.replace(/\.\w+$/, ".webm")}
+                      type="video/webm"
+                    />
+                    Your browser does not support the video tag.
+                  </video>
+
                   <div className="flex w-full md:w-[280px] lg:w-[300px] items-center gap-2 md:gap-4 lg:gap-5">
                     <Select
                       value={selectedLeftAvatar?.uid}
@@ -1220,13 +1232,35 @@ export const HomeScreen = () => {
 
               <div className="flex flex-col md:flex-row-reverse lg:flex-row-reverse items-center md:items-start lg:items-start gap-4 md:gap-6 lg:gap-8 w-full lg:w-1/2">
                 <div className="flex flex-col w-full md:w-[300px] lg:w-[400px] items-center gap-4">
-                  <video
+                  {/* <video
                     ref={rightVideoRef}
                     src={selectedRightAvatar?.video}
                     className="w-full h-auto md:h-[360px] lg:h-[400px] object-cover rounded-lg"
                     muted
                     playsInline
-                  />
+                  /> */}
+                  <video
+                    ref={rightVideoRef}
+                    className="w-full h-auto md:h-[360px] lg:h-[400px] object-cover rounded-lg"
+                    muted
+                    playsInline
+                    controls
+                  >
+                    <source
+                      src={selectedRightAvatar?.video.replace(/\.\w+$/, ".mp4")}
+                      type="video/mp4"
+                    />
+                    <source src={selectedRightAvatar?.video} type="video/ogg" />
+                    <source
+                      src={selectedRightAvatar?.video.replace(
+                        /\.\w+$/,
+                        ".webm"
+                      )}
+                      type="video/webm"
+                    />
+                    Your browser does not support the video tag.
+                  </video>
+
                   <div className="flex w-full md:w-[280px] lg:w-[300px] items-center gap-2 md:gap-4 lg:gap-5">
                     <Select
                       value={selectedRightAvatar?.uid}
