@@ -219,7 +219,7 @@ export function UploadAvatarForm() {
         // Extract error message from API response if available
         const errorMessage =
           error.response?.data?.message ||
-          "There was an error uploading your avatar";
+          "File size is too large. Please use a smaller file.";
 
         toast.error("Upload failed", {
           description: errorMessage || "Please try again.",
