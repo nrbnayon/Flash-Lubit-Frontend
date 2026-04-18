@@ -1107,11 +1107,11 @@ export const HomeScreen = () => {
   return (
     <div className="flex flex-row justify-center w-full">
       <div className="w-full max-w-[1920px]">
-        <div className="relative min-h-screen bg-[url(/background1.webp)] bg-cover bg-[50%_0%] px-4 md:px-6 lg:px-10">
+        <div className="relative min-h-screen bg-[url(/background1.webp)] bg-cover bg-[50%_0%] px-3 sm:px-4 md:px-6 lg:px-10">
           {/* Header */}
           <div
             ref={headerRef}
-            className={`flex justify-between items-center p-4 sticky top-0 z-10 transition-transform duration-300 ${
+            className={`flex justify-between items-center gap-2 py-3 sm:py-4 sticky top-0 z-10 transition-transform duration-300 ${
               isHeaderVisible ? "translate-y-0" : "-translate-y-full"
             }`}
           >
@@ -1120,31 +1120,31 @@ export const HomeScreen = () => {
               alt="Logo"
               width={60}
               height={60}
-              className="w-[60px] md:w-[60px] lg:w-[60px] h-8 lg:h-12 object-cover"
+              className="w-10 h-8 sm:w-12 sm:h-10 lg:w-[60px] lg:h-12 object-cover"
             />
-            <h1 className="font-['Inter',Helvetica] font-semibold text-[#101010] text-2xl md:text-2xl lg:text-3xl text-center tracking-[0] leading-[normal]">
+            <h1 className="font-['Inter',Helvetica] font-semibold text-[#101010] text-lg sm:text-xl md:text-2xl lg:text-3xl text-center tracking-[0] leading-[normal] truncate">
               Internal Dialogue
             </h1>
             <Button
-              className="w-[140px] md:w-[200px] h-10 md:h-12 gap-2.5 px-4 md:px-4 py-2 md:py-2.5 bg-purple rounded-xl font-medium text-sm md:text-base"
+              className="min-w-[120px] sm:min-w-[140px] md:w-[180px] lg:w-[200px] h-9 sm:h-10 md:h-12 px-3 md:px-4 py-2 bg-purple rounded-xl font-medium text-xs sm:text-sm md:text-base"
               onClick={() => setShowAnalysisModal(!showAnalysisModal)}
             >
               {showAnalysisModal ? "Hide AI Analysis" : "Show AI Analysis"}
             </Button>
           </div>
 
-          <div className="pt-2 pb-6 px-2 md:px-6 lg:px-12 max-w-full mx-auto custom-scrollbar">
+          <div className="pt-1 sm:pt-2 pb-6 px-1 sm:px-2 md:px-4 lg:px-12 max-w-full mx-auto custom-scrollbar">
             <div className="flex flex-col lg:flex-row justify-between gap-6 md:gap-8 lg:gap-12">
-              <div className="flex flex-col md:flex-row lg:flex-row items-center md:items-start lg:items-start gap-4 md:gap-6 lg:gap-8 w-full lg:w-1/2">
-                <div className="flex flex-col w-full md:w-[300px] lg:w-[400px] items-center gap-4">
+              <div className="flex flex-col xl:flex-row items-center xl:items-start gap-4 sm:gap-5 lg:gap-8 w-full lg:w-1/2">
+                <div className="flex flex-col w-full max-w-[420px] xl:w-[400px] items-center gap-4">
                   <video
                     ref={leftVideoRef}
                     src={selectedLeftAvatar?.video}
-                    className="w-full h-auto md:h-[300px] lg:h-[400px] object-cover rounded-lg"
+                    className="w-full h-auto sm:h-[320px] lg:h-[400px] object-cover rounded-lg"
                     muted
                     playsInline
                   />
-                  <div className="flex w-full md:w-[280px] lg:w-[300px] items-center gap-2 md:gap-4 lg:gap-5">
+                  <div className="flex w-full sm:w-[320px] lg:w-[300px] items-center gap-2 sm:gap-3 lg:gap-5">
                     <Select
                       value={selectedLeftAvatar?.uid}
                       onValueChange={(value) =>
@@ -1153,7 +1153,7 @@ export const HomeScreen = () => {
                         )
                       }
                     >
-                      <SelectTrigger className="h-8 md:h-10 flex-1 bg-[#ffffff4c] rounded-xl border border-solid border-purple px-3 py-2 md:px-4 md:py-2.5">
+                      <SelectTrigger className="h-10 lg:h-10 flex-1 bg-[#ffffff4c] rounded-xl border border-solid border-purple px-3 py-2">
                         <SelectValue placeholder="Select User" />
                       </SelectTrigger>
                       <SelectContent>
@@ -1165,7 +1165,7 @@ export const HomeScreen = () => {
                       </SelectContent>
                     </Select>
                     <Select value={userVoice} onValueChange={setUserVoice}>
-                      <SelectTrigger className="h-8 md:h-10 flex-1 bg-[#ffffff4c] rounded-xl border border-solid border-purple px-3 py-2 md:px-4 md:py-2.5">
+                      <SelectTrigger className="h-10 lg:h-10 flex-1 bg-[#ffffff4c] rounded-xl border border-solid border-purple px-3 py-2">
                         <SelectValue placeholder="Select Voice" />
                       </SelectTrigger>
                       <SelectContent>
@@ -1188,7 +1188,7 @@ export const HomeScreen = () => {
                 </div>
                 <div
                   ref={leftMessagesRef}
-                  className="flex flex-col w-full md:max-w-[250px] lg:max-w-[300px] items-start gap-6 md:gap-8 lg:gap-10 px-0 py-4 md:py-6 lg:py-10 overflow-y-auto max-h-[400px] custom-scrollbar"
+                  className="flex flex-col w-full max-w-[420px] xl:max-w-[300px] items-start gap-4 sm:gap-6 lg:gap-10 px-0 py-3 sm:py-4 lg:py-10 overflow-y-auto max-h-[320px] sm:max-h-[360px] lg:max-h-[400px] custom-scrollbar"
                 >
                   {chatMessages.map((msg, originalIndex) =>
                     msg.sender === "user" ? (
@@ -1211,16 +1211,16 @@ export const HomeScreen = () => {
                 </div>
               </div>
 
-              <div className="flex flex-col md:flex-row-reverse lg:flex-row-reverse items-center md:items-start lg:items-start gap-4 md:gap-6 lg:gap-8 w-full lg:w-1/2">
-                <div className="flex flex-col w-full md:w-[300px] lg:w-[400px] items-center gap-4">
+              <div className="flex flex-col xl:flex-row-reverse items-center xl:items-start gap-4 sm:gap-5 lg:gap-8 w-full lg:w-1/2">
+                <div className="flex flex-col w-full max-w-[420px] xl:w-[400px] items-center gap-4">
                   <video
                     ref={rightVideoRef}
                     src={selectedRightAvatar?.video}
-                    className="w-full h-auto md:h-[360px] lg:h-[400px] object-cover rounded-lg"
+                    className="w-full h-auto sm:h-[320px] lg:h-[400px] object-cover rounded-lg"
                     muted
                     playsInline
                   />
-                  <div className="flex w-full md:w-[280px] lg:w-[300px] items-center gap-2 md:gap-4 lg:gap-5">
+                  <div className="flex w-full sm:w-[320px] lg:w-[300px] items-center gap-2 sm:gap-3 lg:gap-5">
                     <Select
                       value={selectedRightAvatar?.uid}
                       onValueChange={(value) =>
@@ -1229,7 +1229,7 @@ export const HomeScreen = () => {
                         )
                       }
                     >
-                      <SelectTrigger className="h-8 md:h-10 flex-1 bg-[#ffffff4c] rounded-xl border border-solid border-purple px-3 py-2 md:px-4 md:py-2.5">
+                      <SelectTrigger className="h-10 lg:h-10 flex-1 bg-[#ffffff4c] rounded-xl border border-solid border-purple px-3 py-2">
                         <SelectValue placeholder="Select AI Avatar" />
                       </SelectTrigger>
                       <SelectContent>
@@ -1241,7 +1241,7 @@ export const HomeScreen = () => {
                       </SelectContent>
                     </Select>
                     <Select value={aiVoice} onValueChange={setAiVoice}>
-                      <SelectTrigger className="h-8 md:h-10 flex-1 bg-[#ffffff4c] rounded-xl border border-solid border-purple px-3 py-2 md:px-4 md:py-2.5">
+                      <SelectTrigger className="h-10 lg:h-10 flex-1 bg-[#ffffff4c] rounded-xl border border-solid border-purple px-3 py-2">
                         <SelectValue placeholder="Select Voice" />
                       </SelectTrigger>
                       <SelectContent>
@@ -1264,7 +1264,7 @@ export const HomeScreen = () => {
                 </div>
                 <div
                   ref={rightMessagesRef}
-                  className="flex flex-col w-full md:max-w-[250px] lg:max-w-[300px] items-end gap-8 md:gap-10 lg:gap-10 pt-4 md:pt-10 lg:pt-20 pb-0 px-0 overflow-y-auto max-h-[400px]"
+                  className="flex flex-col w-full max-w-[420px] xl:max-w-[300px] items-end gap-4 sm:gap-6 lg:gap-10 pt-3 sm:pt-4 lg:pt-20 pb-0 px-0 overflow-y-auto max-h-[320px] sm:max-h-[360px] lg:max-h-[400px]"
                 >
                   {chatMessages.map((msg, originalIndex) =>
                     msg.sender === "ai" ? (
@@ -1288,35 +1288,35 @@ export const HomeScreen = () => {
               </div>
             </div>
 
-            <div className="flex flex-col max-w-[400px] items-center gap-2 mt-8 md:-mt-4 md:gap-2 mx-auto p-0">
+            <div className="flex flex-col w-full max-w-[640px] items-center gap-2 sm:gap-3 mt-6 md:mt-4 lg:-mt-4 mx-auto p-0">
               <Link
                 href="/upload-avatar"
-                className="bg-purple rounded-xl text-white font-medium text-xs md:text-sm h-8 md:h-10 px-4 flex justify-center items-center"
+                className="w-full sm:w-auto bg-purple rounded-xl text-white font-medium text-sm h-10 px-4 flex justify-center items-center"
               >
                 Upload New Avatar
               </Link>
               <Button
                 onClick={handleSaveChat}
-                className="bg-purple rounded-xl text-white font-medium text-xs md:text-sm h-8 md:h-10 px-4 flex justify-center items-center"
+                className="w-full sm:w-auto bg-purple rounded-xl text-white font-medium text-sm h-10 px-4 flex justify-center items-center"
               >
                 💾 Save This Chat
               </Button>
-              <div className="flex justify-center max-w-[400px] items-center gap-2">
+              <div className="flex flex-col sm:flex-row justify-center w-full sm:w-auto items-stretch sm:items-center gap-2">
                 <Button
                   onClick={handleReplayDialogue}
-                  className="bg-purple rounded-xl text-white font-medium text-xs md:text-sm h-8 md:h-10 px-4 flex justify-center items-center"
+                  className="w-full sm:w-auto bg-purple rounded-xl text-white font-medium text-sm h-10 px-4 flex justify-center items-center"
                 >
                   {isPlaying ? "⏸️ Pause Dialogue" : "⏯️ Replay Dialogue"}
                 </Button>
                 <Button
                   onClick={handleCopyChat}
-                  className="bg-purple rounded-xl text-white font-medium text-xs md:text-sm h-8 md:h-10 px-4 flex justify-center items-center"
+                  className="w-full sm:w-auto bg-purple rounded-xl text-white font-medium text-sm h-10 px-4 flex justify-center items-center"
                 >
                   📋 Copy Chat
                 </Button>
               </div>
               <Select onValueChange={handleLoadChat}>
-                <SelectTrigger className="bg-purple rounded-xl border-none text-white font-medium text-xs md:text-sm h-8 md:h-10 px-4 flex justify-between items-center">
+                <SelectTrigger className="w-full sm:w-[280px] bg-purple rounded-xl border-none text-white font-medium text-sm h-10 px-4 flex justify-between items-center">
                   <SelectValue placeholder="📂 Select Conversation" />
                 </SelectTrigger>
                 <SelectContent className="bg-white text-black border border-purple rounded-xl">
@@ -1329,8 +1329,8 @@ export const HomeScreen = () => {
               </Select>
             </div>
 
-            <Card className="flex flex-col md:flex-row items-center gap-2 p-1 md:p-2 lg:p-4 relative self-stretch w-full bg-[#ffffff4c] mt-6 md:mt-8 rounded-[20px]">
-              <CardContent className="flex flex-col md:flex-row items-center gap-3 p-0 w-full">
+            <Card className="flex flex-col xl:flex-row items-stretch xl:items-center gap-2 p-2 sm:p-3 lg:p-4 relative self-stretch w-full bg-[#ffffff4c] mt-6 md:mt-8 rounded-[20px]">
+              <CardContent className="flex flex-col xl:flex-row items-stretch xl:items-center gap-3 p-0 w-full">
                 <Button
                   onClick={() => {
                     setConversationId(uuidv4());
@@ -1344,14 +1344,14 @@ export const HomeScreen = () => {
                       },
                     });
                   }}
-                  className="h-10 md:h-12 bg-purple rounded-xl font-medium text-xs md:text-sm w-full md:w-auto"
+                  className="h-10 md:h-12 bg-purple rounded-xl font-medium text-sm w-full xl:w-auto"
                 >
                   Start New Conversation
                 </Button>
-                <div className="flex flex-col md:flex-row items-center gap-3 w-full">
-                  <div className="flex items-center gap-1 md:gap-4 px-1 md:px-2 py-1 md:py-2 relative flex-1 bg-[#ffffff33] rounded-xl w-full md:w-auto">
+                <div className="flex flex-col xl:flex-row items-stretch xl:items-center gap-3 w-full">
+                  <div className="flex items-center gap-2 sm:gap-3 md:gap-4 px-2 py-2 relative flex-1 bg-[#ffffff33] rounded-xl w-full">
                     <Input
-                      className="h-8 md:h-10 flex-1 bg-white rounded-2xl border border-solid border-purple px-4 py-2 font-medium text-[#101010] text-xs"
+                      className="h-10 flex-1 bg-white rounded-2xl border border-solid border-purple px-3 sm:px-4 py-2 font-medium text-[#101010] text-sm"
                       placeholder="User says..."
                       value={leftUserInput}
                       onChange={(e) => setLeftUserInput(e.target.value)}
@@ -1380,14 +1380,14 @@ export const HomeScreen = () => {
                     </Button>
                     <Button
                       onClick={() => handleSendMessage(leftUserInput, "user")}
-                      className="h-8 md:h-10 px-2 md:px-4 py-2 md:py-4 bg-purple rounded-xl font-medium text-sm md:text-base"
+                      className="h-10 px-3 sm:px-4 py-2 bg-purple rounded-xl font-medium text-sm"
                     >
                       Send
                     </Button>
                   </div>
-                  <div className="flex items-center gap-2 mt-3 md:mt-0">
+                  <div className="flex flex-wrap items-center gap-2">
                     <Select value={personality} onValueChange={setPersonality}>
-                      <SelectTrigger className="max-w-32 md:max-w-40 h-8 md:h-10 bg-[#ffffff4c] rounded-xl border border-solid border-purple p-2">
+                      <SelectTrigger className="w-[130px] sm:w-[150px] h-10 bg-[#ffffff4c] rounded-xl border border-solid border-purple p-2">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -1412,7 +1412,7 @@ export const HomeScreen = () => {
                       </SelectContent>
                     </Select>
                     <Select value={replyAs} onValueChange={setReplyAs}>
-                      <SelectTrigger className="max-w-48 md:min-w-28 h-8 md:h-10 bg-[#ffffff4c] rounded-xl border border-solid border-purple p-2">
+                      <SelectTrigger className="w-[140px] sm:w-[170px] h-10 bg-[#ffffff4c] rounded-xl border border-solid border-purple p-2">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -1421,9 +1421,9 @@ export const HomeScreen = () => {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="flex items-center gap-2 md:gap-4 px-2 md:px-4 py-2 md:py-3 relative flex-1 bg-[#ffffff33] rounded-xl w-full md:w-auto mt-3 md:mt-0">
+                  <div className="flex items-center gap-2 sm:gap-3 md:gap-4 px-2 sm:px-3 md:px-4 py-2 md:py-3 relative flex-1 bg-[#ffffff33] rounded-xl w-full">
                     <Input
-                      className="h-8 md:h-10 flex-1 bg-white rounded-2xl border border-solid border-purple px-4 py-2 font-medium text-[#101010] text-xs"
+                      className="h-10 flex-1 bg-white rounded-2xl border border-solid border-purple px-3 sm:px-4 py-2 font-medium text-[#101010] text-sm"
                       placeholder="AI says..."
                       value={rightUserInput}
                       onChange={(e) => setRightUserInput(e.target.value)}
@@ -1454,7 +1454,7 @@ export const HomeScreen = () => {
                     <Button
                       onClick={() => handleSendMessage(rightUserInput, "ai")}
                       disabled={replyAs === "ai"}
-                      className="h-8 md:h-10 px-2 md:px-4 py-2 md:py-4 bg-purple rounded-xl font-medium text-sm md:text-base"
+                      className="h-10 px-3 sm:px-4 py-2 bg-purple rounded-xl font-medium text-sm"
                     >
                       Send
                     </Button>
@@ -1463,9 +1463,9 @@ export const HomeScreen = () => {
                 <Button
                   onClick={stopMic}
                   disabled={!activeMic}
-                  className={`h-8 md:h-10 gap-2 px-6 py-2 ${
+                  className={`h-10 gap-2 px-4 sm:px-6 py-2 ${
                     activeMic ? "bg-red-500" : "bg-purple opacity-60"
-                  } rounded-xl font-medium text-sm md:text-base mt-3 md:mt-0 w-full md:w-auto`}
+                  } rounded-xl font-medium text-sm mt-1 xl:mt-0 w-full xl:w-auto`}
                 >
                   <Image
                     src="/mic-off.png"
