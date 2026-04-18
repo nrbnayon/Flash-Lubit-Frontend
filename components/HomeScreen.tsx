@@ -50,7 +50,7 @@ interface Message {
 }
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_ASSETS_URL || "https://flashapi.lubitsh.com/api";
+  process.env.NEXT_PUBLIC_API_ASSETS_URL || process.env.NEXT_PUBLIC_API_BASE_URL || "https://flash.zamansheikh.com/api";
 
 const getFullUrl = (path: string): string => {
   if (!path) return "";
@@ -307,7 +307,7 @@ export const HomeScreen = () => {
         await playAudioWithVideo(rightVideoRef, replyMessage.audioUrl || "");
       }
     } catch (error) {
-      toast.error("Failed to send message. Please try again.");
+      // Error toast is handled in speakApi for consistent backend messages.
     }
   };
 
@@ -534,21 +534,14 @@ export const HomeScreen = () => {
 
         const audioUrl = getFullUrl(audioPath);
         // Use the correct video ref based on sender and replyAs context
-        const videoRef =
-          sender === "user" && replyAs === "user" && i % 2 === 1
-            ? rightVideoRef
-            : sender === "user"
-            ? leftVideoRef
-            : rightVideoRef;
+        const videoRef = sender === "user" ? leftVideoRef : rightVideoRef;
 
         // Scroll to the message
         const messageEl = messageRefs.current[i];
         if (messageEl && headerRef.current) {
           const headerHeight = headerRef.current.getBoundingClientRect().height;
           const messageContainer =
-            sender === "user" && replyAs === "user" && i % 2 === 1
-              ? rightMessagesRef.current
-              : sender === "user"
+            sender === "user"
               ? leftMessagesRef.current
               : rightMessagesRef.current;
 
@@ -745,7 +738,7 @@ export const HomeScreen = () => {
         const sender = msg.user ? "user" : "ai";
         const text = msg.user || msg.ai || "";
         const audioUrl = getFullUrl(
-          chatDetails.audio_dict[index][sender] || ""
+          chatDetails.audio_dict[index]?.[sender] || ""
         );
         return { text, sender, audioUrl };
       });
@@ -807,7 +800,7 @@ export const HomeScreen = () => {
       const response = await analyzeTextApi({ text: analyzeText });
       setAnalysisResult(response.summary || "No summary available");
     } catch (error) {
-      toast.error("Failed to analyze text. Please try again.");
+      // Error toast is handled in analyzeTextApi for consistent backend messages.
     }
   };
 
@@ -1520,12 +1513,14 @@ export const HomeScreen = () => {
                     <p className="text-[#101010]">{analysisResult}</p>
                   </div>
                 )}
-                <Button
-                  onClick={handleAnalyzeText}
-                  className="w-28 md:w-40 h-8 md:h-10 px-4 md:px-6 py-2 md:py-2 kış5 bg-purple rounded-xl font-medium text-sm md:text-base"
-                >
-                  Analyze
-                </Button>
+                <div className="flex w-full justify-end items-center">
+                  <Button
+                    onClick={handleAnalyzeText}
+                    className="w-28 md:w-40 h-8 md:h-10 px-4 md:px-6 py-2 md:py-2 bg-purple rounded-xl font-medium text-sm md:text-base"
+                  >
+                    Analyze
+                  </Button>
+                </div>
               </DialogContent>
             </Dialog>
 

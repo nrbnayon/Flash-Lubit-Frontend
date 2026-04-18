@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { useToast } from "@/components/ui/use-toast"
 
 interface UseSpeechProps {
@@ -19,6 +19,7 @@ export function useSpeech({ onTranscript }: UseSpeechProps = {}) {
   const [isListening, setIsListening] = useState(false)
   const [transcript, setTranscript] = useState("")
   const [recognition, setRecognition] = useState<SpeechRecognition | null>(null)
+  const isListeningRef = useRef(false)
 
   useEffect(() => {
     // Check if browser supports speech recognition
@@ -71,7 +72,7 @@ export function useSpeech({ onTranscript }: UseSpeechProps = {}) {
     }
 
     recognitionInstance.onend = () => {
-      if (isListening) {
+      if (isListeningRef.current) {
         recognitionInstance.start()
       }
     }
@@ -81,14 +82,15 @@ export function useSpeech({ onTranscript }: UseSpeechProps = {}) {
     return () => {
       recognitionInstance.stop()
     }
-  }, [toast, onTranscript, isListening])
+  }, [toast, onTranscript])
 
   const startListening = useCallback(() => {
     if (!recognition) return
 
     try {
-      recognition.start()
+      isListeningRef.current = true
       setIsListening(true)
+      recognition.start()
       setTranscript("")
       toast({
         title: "Listening",
@@ -107,8 +109,9 @@ export function useSpeech({ onTranscript }: UseSpeechProps = {}) {
   const stopListening = useCallback(() => {
     if (!recognition) return
 
-    recognition.stop()
+    isListeningRef.current = false
     setIsListening(false)
+    recognition.stop()
     toast({
       title: "Stopped Listening",
       description: "Speech recognition stopped",

@@ -53,10 +53,7 @@ export function useConversation() {
       try {
         // In a real app, this would be an API call
         await new Promise((resolve) => setTimeout(resolve, 500))
-        \
-          this would be an API call
-        await new Promise(resolve => setTimeout(resolve, 500))
-        
+
         setConversation(initialConversation)
         setIsLoading(false)
       } catch (err) {

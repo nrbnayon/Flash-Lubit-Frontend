@@ -2,6 +2,28 @@
 import api from "@/lib/axios";
 import { toast } from "sonner";
 
+const getApiErrorMessage = (error: any, fallback: string): string => {
+  const data = error?.response?.data;
+  if (!data) return fallback;
+
+  const normalized =
+    typeof data === "string" ? data : JSON.stringify(data).toLowerCase();
+
+  if (normalized.includes("insufficient_quota")) {
+    return "AI quota has been exceeded. Please upgrade your AI billing plan to continue.";
+  }
+
+  if (typeof data === "string") return data;
+
+  return (
+    data?.detail ||
+    data?.message ||
+    data?.error?.message ||
+    data?.error ||
+    fallback
+  );
+};
+
 export interface SpeakPayload {
   conversation_id: string;
   text: string;
@@ -28,10 +50,10 @@ export const speakApi = async (
     // console.log("speakApi response:", response.data);
     return response.data;
   } catch (error) {
-    if (error instanceof Error && 'response' in error && error.response) {
+    if (error instanceof Error && "response" in error && (error as any).response) {
       console.error("speakApi error response:", (error as any).response.data);
       toast.error("Failed to send message", {
-        description: (error as any).response.data.detail || "Unknown error",
+        description: getApiErrorMessage(error, "Unknown error"),
         style: {
           background: "#ff5757",
           color: "white",
@@ -217,6 +239,7 @@ export const analyzeTextApi = async (
   } catch (error) {
     console.error("Error in analyzeTextApi:", error);
     toast.error("Failed to analyze text", {
+      description: getApiErrorMessage(error, "Please try again."),
       style: {
         background: "#ff5757",
         color: "white",
