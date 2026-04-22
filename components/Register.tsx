@@ -79,10 +79,22 @@ export function Register() {
         router.push("/login");
       }
     } catch (error) {
-      const errorMessage =
-        (error as any)?.response?.data?.message ||
-        (error as any)?.message ||
-        "Registration failed";
+      let errorMessage = "Registration failed";
+      const responseData = (error as any)?.response?.data;
+
+      // Handle field-specific errors (Django REST Framework format)
+      if (responseData && typeof responseData === "object") {
+        const fieldErrors = Object.entries(responseData).find(
+          ([key, value]) => Array.isArray(value) && value.length > 0
+        );
+        if (fieldErrors) {
+          errorMessage = (fieldErrors[1] as string[])[0];
+        }
+      } else if (responseData?.message) {
+        errorMessage = responseData.message;
+      } else if ((error as any)?.message) {
+        errorMessage = (error as any).message;
+      }
 
       toast.error("Registration failed", {
         description: errorMessage,

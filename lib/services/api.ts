@@ -15,6 +15,16 @@ const getApiErrorMessage = (error: any, fallback: string): string => {
 
   if (typeof data === "string") return data;
 
+  // Handle field-specific errors (Django REST Framework format)
+  if (typeof data === "object") {
+    const fieldErrors = Object.entries(data).find(
+      ([key, value]) => Array.isArray(value) && value.length > 0
+    );
+    if (fieldErrors) {
+      return (fieldErrors[1] as string[])[0];
+    }
+  }
+
   return (
     data?.detail ||
     data?.message ||
@@ -55,17 +65,18 @@ export const speakApi = async (
       toast.error("Failed to send message", {
         description: getApiErrorMessage(error, "Unknown error"),
         style: {
-          background: "#ff5757",
-          color: "white",
+          background: "#d32f2f",
+          color: "#ffffff",
           border: "none",
         },
+        descriptionClassName: "text-white text-sm",
       });
     } else {
       console.error("Error in speakApi:", error);
       toast.error("Failed to send message. Please try again.", {
         style: {
-          background: "#ff5757",
-          color: "white",
+          background: "#d32f2f",
+          color: "#ffffff",
           border: "none",
         },
       });
@@ -96,11 +107,13 @@ export const getAvatarsApi = async (): Promise<Avatar[]> => {
   } catch (error) {
     console.error("Error in getAvatarsApi:", error);
     toast.error("Failed to fetch avatars", {
+      description: getApiErrorMessage(error, "Please try again."),
       style: {
-        background: "#ff5757",
-        color: "white",
+        background: "#d32f2f",
+        color: "#ffffff",
         border: "none",
       },
+      descriptionClassName: "text-white text-sm",
     });
     throw error;
   }
@@ -132,11 +145,13 @@ export const saveChatApi = async (
   } catch (error) {
     console.error("Error in saveChatApi:", error);
     toast.error("Failed to save chat", {
+      description: getApiErrorMessage(error, "Please try again."),
       style: {
-        background: "#ff5757",
-        color: "white",
+        background: "#d32f2f",
+        color: "#ffffff",
         border: "none",
       },
+      descriptionClassName: "text-white text-sm",
     });
     throw error;
   }
@@ -150,11 +165,13 @@ export const getSavedChatsApi = async (): Promise<SavedChat[]> => {
   } catch (error) {
     console.error("Error in getSavedChatsApi:", error);
     toast.error("Failed to fetch saved chats", {
+      description: getApiErrorMessage(error, "Please try again."),
       style: {
-        background: "#ff5757",
-        color: "white",
+        background: "#d32f2f",
+        color: "#ffffff",
         border: "none",
       },
+      descriptionClassName: "text-white text-sm",
     });
     throw error;
   }
@@ -178,11 +195,13 @@ export const getSavedChatApi = async (
   } catch (error) {
     console.error("Error in getSavedChatApi:", error);
     toast.error("Failed to fetch saved chat details", {
+      description: getApiErrorMessage(error, "Please try again."),
       style: {
-        background: "#ff5757",
-        color: "white",
+        background: "#d32f2f",
+        color: "#ffffff",
         border: "none",
       },
+      descriptionClassName: "text-white text-sm",
     });
     throw error;
   }
@@ -208,11 +227,13 @@ export const replayDialogueApi = async (
   } catch (error) {
     console.error("Error in replayDialogueApi:", error);
     toast.error("Failed to replay dialogue", {
+      description: getApiErrorMessage(error, "Please try again."),
       style: {
-        background: "#ff5757",
-        color: "white",
+        background: "#d32f2f",
+        color: "#ffffff",
         border: "none",
       },
+      descriptionClassName: "text-white text-sm",
     });
     throw error;
   }
@@ -241,10 +262,11 @@ export const analyzeTextApi = async (
     toast.error("Failed to analyze text", {
       description: getApiErrorMessage(error, "Please try again."),
       style: {
-        background: "#ff5757",
-        color: "white",
+        background: "#d32f2f",
+        color: "#ffffff",
         border: "none",
       },
+      descriptionClassName: "text-white text-sm",
     });
     throw error;
   }
