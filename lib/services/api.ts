@@ -6,6 +6,25 @@ const getApiErrorMessage = (error: any, fallback: string): string => {
   const data = error?.response?.data;
   if (!data) return fallback;
 
+  const dataCode =
+    typeof data === "object" && data !== null ? String(data.code || "").toLowerCase() : "";
+
+  if (dataCode === "insufficient_quota") {
+    return "OpenAI quota exceeded. Please update your OpenAI billing/plan and try again.";
+  }
+
+  if (dataCode === "rate_limit_exceeded") {
+    return "OpenAI rate limit reached. Please try again shortly.";
+  }
+
+  if (dataCode === "openai_auth_error") {
+    return "OpenAI authentication failed. Please verify server API key configuration.";
+  }
+
+  if (dataCode === "openai_service_error") {
+    return "AI service is temporarily unavailable. Please try again later.";
+  }
+
   const normalized =
     typeof data === "string" ? data : JSON.stringify(data).toLowerCase();
 
